@@ -40,10 +40,48 @@
 
 <p><em>[TBD]</em> There are numerous ways of introducing context to the application using light and audio sensory input, location detection and history management, time of the day and the users interaction with the device. Afterwards the verified context can aid in validating both states and state transitions. For example a user will not start RUNNING right after he was SLEEPING and then continue to SLEEP again afterwards before the threshold passes; but since SLEEPING is not a sensory recognizable activity but a contextually deducible one, we need to introduce context detection and verification first.</p>
 
-<h3>TODO</h3>
+<h4>Context 1: At home</h4>
+
+<p>Assuming that the user sleeps at home every night we would soon be able to generate a somewhat unique fingerprint of the surroundings of the user when he is at home and later on use that fingerprint to identify his status and therefore assume new set of illegal transitions based on that. We will use the wifi SSID and the cell tower identification information to store the fingerprint.</p>
+
+<p><img src="GAPI-Home.jpg" alt="at home state transitions" title="Context: At Home" /></p>
+
+<h5>Infering a new activity: SLEEPING</h5>
+
+<p>Now that we have established the fact that our user is staying at home for the time being we will try to find out what time he went to bed and what time he got out of bed and this is how we acheive it:
+1. After 7pm every night we will periodically check the last activity;if it was still then we query last time of the day on which the device screen was turned on. If this number was over an hour ago we move to step two otherwise we check sleep until the end of this period.
+2. Now we start to gather noise and light sensory input data every 30 seconds. If both are below a certain threshold for more than 20 minutes we assume the user went to bed in the timestamp that the screen went off in step one.
+3. From now on every 5 minutes we check for user activiy and light and noise sensory input in order to make sure the earlier assumption is still correct. In case the sleep cycle is intrupted we will go to step one and start over.
+4. The light data will be adjusted based on time of the day so that in the morning that does not count as being waked up anymore.
+5. If the algorithm detects a wake up sequence after 4am in the morning it will not go back to step one again and will assume the user is awaken for good now.</p>
+
+<h4>Context 2: Not at home</h4>
+
+<p>Although it may sound trivial to describe a context as the opposite of another one, in our case if would be quite useful because the range of the activities that we are recognizing are predominantly performed outside of one's home. In the following graph's details you can see how the legallity of our transitions change based on these two contexts.</p>
+
+<p><img src="GAPI-Not-At-Home.jpg" alt="Not at home state transitions" title="Context: Not At Home" /></p>
+
+<p>Q &amp; A:</p>
 
 <ol>
-<li>Dynamic threshold based on Context</li>
-<li>Specific thresholds for each transition instead of a global threshold for all transitions.</li>
-<li>Multi-level transitions management. I.e from RUNNING to WALKING to STILL and back to RUNNING all before the threshold.</li>
+<li>What is the transitions are not singular but multi-level, meaning the user goes from ON_VEHICLE to RUNNING and then to STILL all before the threshold?
+<ul>
+<li>In every single recognition we check our threshold timer based on the root activity that we started the transition from in relation to the activity that we just recognized. In other words we forget what other intermediary activities were recognized on our way here.</li>
+</ul></li>
+<li>How did you come up with those thresholds?
+<ul>
+<li>They are infered from a large number of test data and are subject to constant change and verification.</li>
+</ul></li>
+<li>What if the user decides to sleep somewhere else?Or what if he sleeps with his lights on?
+<ul>
+<li>The perfect solution for all of these problems either does not exist or is too costly to implement for a general purpose application so we simply assume the normal behaviour of the majority of the population.</li>
+</ul></li>
+<li>What if the user changes his home wifi SSID?
+<ul>
+<li>Our algorithm constantly tries to learn about the Home context in order to make sure it is there, so a new wifi or even a change in the cell tower ID should soon be recognized and the algorithm should adapt accordingly. Unfortunately some data loss may occure in the process.</li>
+</ul></li>
+<li>What if the red lights in different countries have different wait times? Then your threshold is invalid.
+<ul>
+<li>In the next major version of the algorithm we will introduce a machine learning function which will be responsible for dynamically evaluating the thresholds for each transition and changing it as needed. </li>
+</ul></li>
 </ol>
