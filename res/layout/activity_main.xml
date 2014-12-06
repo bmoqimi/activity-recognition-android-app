@@ -15,11 +15,25 @@
         android:orientation="vertical" >
 
         <Button
-            android:id="@+id/btnExport"
+            android:id="@+id/Button02"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:onClick="exportDB"
             android:text="Export" />
+
+        <Button
+            android:id="@+id/Button01"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:onClick="openwifi"
+            android:text="wifi" />
+
+        <Button
+            android:id="@+id/btnExport"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:onClick="openlocarea"
+            android:text="locArea" />
 
         <Button
             android:id="@+id/btnStartService"
