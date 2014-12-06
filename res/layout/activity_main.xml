@@ -15,6 +15,13 @@
         android:orientation="vertical" >
 
         <Button
+            android:id="@+id/Button03"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:onClick="openMap"
+            android:text="map" />
+
+        <Button
             android:id="@+id/Button02"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

@@ -244,4 +244,9 @@ public class MainActivity extends Activity {
 		  Intent intent = new Intent(this, GPSActivity.class);
 		    startActivity(intent);
 	}
+	
+	public void openMap(View view) {
+		  Intent intent = new Intent(this, MapActivity.class);
+		    startActivity(intent);
+	}
 }
