@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import project.praktikum.Wifi.WifiActivity;
 import project.praktikum.activity.recognition.ActivityCaptureService;
 import project.praktikum.database.CustomCursorAdapter;
 import project.praktikum.database.DataBase;
@@ -231,5 +233,14 @@ public class MainActivity extends Activity {
 		sendIntent.setType("*/*");
 		sendIntent.putExtra(android.content.Intent.EXTRA_STREAM, uriToZip);
 		startActivity(Intent.createChooser(sendIntent, "Send Attachment !:"));
+	}
+	public void openwifi(View view) {
+		  Intent intent = new Intent(this, WifiActivity.class);
+		    startActivity(intent);
+	}
+	
+	public void openlocarea(View view) {
+		  Intent intent = new Intent(this, GPSActivity.class);
+		    startActivity(intent);
 	}
 }
