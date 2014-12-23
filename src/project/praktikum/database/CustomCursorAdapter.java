@@ -1,8 +1,6 @@
 package project.praktikum.database;
 
 import project.praktikum.activity.recognition.R;
-import project.praktikum.activity.recognition.R.id;
-import project.praktikum.activity.recognition.R.layout;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
@@ -105,11 +103,11 @@ public class CustomCursorAdapter  extends CursorAdapter
 	private void setTextBoxes(View v, Cursor c)
 	{
 		TextView txtDate = (TextView) v.findViewById(R.id.textView1);
-		//TextView txtActivity = (TextView) v.findViewById(R.id.textView2);
-		//TextView txtConfidence = (TextView) v.findViewById(R.id.textView3);
+		TextView txtActivity = (TextView) v.findViewById(R.id.textView2);
+		TextView txtConfidence = (TextView) v.findViewById(R.id.textView3);
 		txtDate.setText(c.getString(c.getColumnIndex("date")));
-		//txtActivity.setText(c.getString(c.getColumnIndex("type")));
-		//txtConfidence.setText(c.getString(c.getColumnIndex("conf")));
+		txtActivity.setText(c.getString(c.getColumnIndex(db.COLUMN_ACTIVITY)));
+		txtConfidence.setText(c.getString(c.getColumnIndex("conf")));
 	}
 }
 

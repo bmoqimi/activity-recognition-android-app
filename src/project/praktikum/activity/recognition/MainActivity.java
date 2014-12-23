@@ -8,7 +8,6 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import project.praktikum.Wifi.WifiActivity;
 import project.praktikum.activity.recognition.ActivityCaptureService;
 import project.praktikum.database.CustomCursorAdapter;
 import project.praktikum.database.DataBase;
@@ -29,10 +28,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -42,11 +41,22 @@ public class MainActivity extends Activity {
 	ListView lv;
 	Cursor c;
 	CustomCursorAdapter dbAdapter;
-	SimpleCursorAdapter dbAdapterC;
+
 	boolean isServiceRunning;
+	boolean isFingerprintingServiceRunning;
+
 	Button btn;
+	Button btnFingerprinting;
+
 	Button btnExport;
+	ImageView imgCurrentActivity;
 	Handler handler;
+
+	Messenger mFingerprintingService = null;
+	boolean mFingerprintingIsBound;
+	final Messenger mFingerprintingMessenger = new Messenger(
+			new IncomingHandler());
+
 	Messenger mService = null;
 	boolean mIsBound;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -86,44 +96,85 @@ public class MainActivity extends Activity {
 		}
 	};
 
-	@SuppressWarnings({ "static-access", "deprecation" })
+	private ServiceConnection mFingerprintingConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			mFingerprintingService = new Messenger(service);
+			try {
+				Message msg = Message
+						.obtain(null,
+								FingerprintingService.MSG_FINGERPRINTING_REGISTER_CLIENT);
+				msg.replyTo = mFingerprintingMessenger;
+				mFingerprintingService.send(msg);
+			} catch (RemoteException e) {
+				// In this case the service has crashed before we could even do
+				// anything with it
+			}
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected - process crashed.
+			mFingerprintingService = null;
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		db = new DataBase(getApplicationContext());
 		lv = (ListView) findViewById(R.id.lv);
-		String[] columns = new String[] { db.COLUMN_DATE, db.COLUMN_UNKNOWN,
-				db.COLUMN_IN_VEHICLE, db.COLUMN_ON_BICYCLE, db.COLUMN_ON_FOOT,
-				db.COLUMN_STILL, db.COLUMN_TILTING };
-
-		// the XML defined views which the data will be bound to
-		int[] to = new int[] { R.id.textView1, R.id.textView2, R.id.textView3 };
 
 		c = db.getAllRecords();
 
 		dbAdapter = new CustomCursorAdapter(getApplicationContext(), c, 0, db);
 
-		dbAdapterC = new SimpleCursorAdapter(this, R.layout.item_lv, c,
-				columns, to);
-
 		lv.setAdapter(dbAdapter);
+
+		isFingerprintingServiceRunning = isMyServiceRunning(FingerprintingService.class);
+		btnFingerprinting = (Button) findViewById(R.id.ButtonFingerprintingService);
+
 		isServiceRunning = isMyServiceRunning(ActivityCaptureService.class);
 		btn = (Button) findViewById(R.id.btnStartService);
+
 		btnExport = (Button) findViewById(R.id.btnExport);
+		imgCurrentActivity = (ImageView) findViewById(R.id.imgCurrentActivity);
+
+		if (isFingerprintingServiceRunning) {
+			btnFingerprinting.setText("Stop Fingerprinting");
+			doFingerprintingBindService();
+		}
+
 		if (isServiceRunning) {
 			btn.setText("STOP CAPTURE");
 			doBindService();
 		}
 	}
-	
 
+	@SuppressWarnings("static-access")
 	private void updateLv() {
 		c = db.getAllRecords();
+		c.moveToFirst();
+		setImgCurrentActivity(c.getString(c.getColumnIndex(db.COLUMN_ACTIVITY)));
 		dbAdapter.changeCursor(c);
 		dbAdapter.notifyDataSetChanged();
-		dbAdapterC.changeCursor(c);
-		dbAdapterC.notifyDataSetChanged();
+	}
+
+	private void setImgCurrentActivity(String avtivity) {
+		if (avtivity.equals("Unknown")) {
+			imgCurrentActivity.setImageResource(R.drawable.unknown);
+		} else if (avtivity.equals("In Vehicle")) {
+			imgCurrentActivity.setImageResource(R.drawable.in_vehicle);
+		} else if (avtivity.equals("On Bicycle")) {
+			imgCurrentActivity.setImageResource(R.drawable.on_bike);
+		} else if (avtivity.equals("On Foot")) {
+			imgCurrentActivity.setImageResource(R.drawable.on_foot);
+		} else if (avtivity.equals("Still")) {
+			imgCurrentActivity.setImageResource(R.drawable.still);
+		} else {
+			imgCurrentActivity.setImageResource(R.drawable.tillting);
+		}
 	}
 
 	private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -154,10 +205,32 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	public void startFingerprintingService(View view) {
+		if (!isFingerprintingServiceRunning) {
+			Intent i = new Intent(getBaseContext(), FingerprintingService.class);
+			startService(i);
+			isFingerprintingServiceRunning = true;
+			btnFingerprinting.setText("Stop Fingerprinting");
+			doFingerprintingBindService();
+		} else {
+			doFingerprintingUnbindService();
+			stopService(new Intent(getBaseContext(),
+					FingerprintingService.class));
+			isFingerprintingServiceRunning = false;
+			btnFingerprinting.setText("Start Fingerprinting");
+		}
+	}
+
 	void doBindService() {
 		bindService(new Intent(this, ActivityCaptureService.class),
 				mConnection, Context.BIND_AUTO_CREATE);
 		mIsBound = true;
+	}
+
+	void doFingerprintingBindService() {
+		bindService(new Intent(this, FingerprintingService.class),
+				mFingerprintingConnection, Context.BIND_AUTO_CREATE);
+		mFingerprintingIsBound = true;
 	}
 
 	void doUnbindService() {
@@ -181,10 +254,39 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	void doFingerprintingUnbindService() {
+		if (mFingerprintingIsBound) {
+			// If we have received the service, and hence registered with it,
+			// then now is the time to unregister.
+			if (mFingerprintingService != null) {
+				try {
+					Message msg = Message
+							.obtain(null,
+									FingerprintingService.MSG_FINGERPRINTING_UNREGISTER_CLIENT);
+					msg.replyTo = mFingerprintingMessenger;
+					mFingerprintingService.send(msg);
+				} catch (RemoteException e) {
+					// There is nothing special we need to do if the service has
+					// crashed.
+				}
+			}
+			// Detach our existing connection.
+			unbindService(mFingerprintingConnection);
+			mFingerprintingIsBound = false;
+		}
+	}
+
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
+		try {
+			doFingerprintingUnbindService();
+		} catch (Throwable t) {
+			Log.e("MainActivity",
+					"Failed to unbind from the Fingerprinting service", t);
+		}
+
 		try {
 			doUnbindService();
 		} catch (Throwable t) {
@@ -235,13 +337,17 @@ public class MainActivity extends Activity {
 		sendIntent.putExtra(android.content.Intent.EXTRA_STREAM, uriToZip);
 		startActivity(Intent.createChooser(sendIntent, "Send Attachment !:"));
 	}
-	public void openwifi(View view) {
-		  Intent intent = new Intent(this, WifiActivity.class);
-		    startActivity(intent);
-	}
-	
-	public void openlocarea(View view) {
-		  Intent intent = new Intent(this, GPSActivity.class);
-		    startActivity(intent);
-	}
+
+	// sendIntent.setType("image/jpeg");
+	// sendIntent.setType("message/rfc822");
+	// sendIntent.setType("*/*");
+	// sendIntent.putExtra(android.content.Intent.EXTRA_STREAM, uriToZip);
+	// startActivity(Intent.createChooser(sendIntent, "Send Attachment !:"));
+	// }
+
+	// public void openlocarea(View view) {
+	// Intent intent = new Intent(this, GPSActivity.class);
+	// startActivity(intent);
+	// }
+
 }

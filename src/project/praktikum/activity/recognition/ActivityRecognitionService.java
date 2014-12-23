@@ -22,38 +22,36 @@ public class ActivityRecognitionService extends IntentService
 	{
 		if(ActivityRecognitionResult.hasResult(intent))
 		{
-			ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
 			
-			Log.i(TAG, getType(result.getMostProbableActivity().getType()) +"t" 
+			ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
+			String activity = getType(result.getMostProbableActivity().getType());
+			//Ignore Unknown,Tilting
+			if (activity != "Unknown" ) {
+			Log.i(TAG, activity +"t" 
 					+ result.getMostProbableActivity().getConfidence());
 			
 			Intent i = new Intent("project.praktikum.recognition.ACTIVITY_RECOGNITION_DATA");
-			i.putExtra("Unknown", getType(result.getActivityConfidence(DetectedActivity.UNKNOWN)));
-			i.putExtra("In Vehicle", getType(result.getActivityConfidence(DetectedActivity.IN_VEHICLE)));
-			i.putExtra("On Bicycle", getType(result.getActivityConfidence(DetectedActivity.ON_BICYCLE)));
-			i.putExtra("On Foot", getType(result.getActivityConfidence(DetectedActivity.ON_FOOT)));
-			i.putExtra("Still", getType(result.getActivityConfidence(DetectedActivity.STILL)));
-			i.putExtra("Tilting", getType(result.getActivityConfidence(DetectedActivity.TILTING)));
+			i.putExtra("activity", activity);
+			i.putExtra("conf", result.getMostProbableActivity().getConfidence());
 			sendBroadcast(i);
+		}
 		}
 	}
 	 
 	private String getType(int type)
 	{
-		if(type == DetectedActivity.UNKNOWN)
-			return "Unknown";
+		if(type == DetectedActivity.WALKING)
+			return "Walking";
 		else if(type == DetectedActivity.IN_VEHICLE)
-			return "In Vehicle";
+			return "InVehicle";
 		else if(type == DetectedActivity.ON_BICYCLE)
-			return "On Bicycle";
-		else if(type == DetectedActivity.ON_FOOT)
-			return "On Foot";
+			return "OnBicycle";
+		else if(type == DetectedActivity.RUNNING)
+			return "Running";
 		else if(type == DetectedActivity.STILL)
 			return "Still";
-		else if(type == DetectedActivity.TILTING)
-			return "Tilting";
 		else
-			return "";
+			return "Unknown";
 	}
 }
 
