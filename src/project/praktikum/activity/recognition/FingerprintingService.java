@@ -94,6 +94,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
 		}
 	}
 
+	
 //	private void sendMessageToUI(int intvaluetosend) {
 //		for (int i=mClients.size()-1; i>=0; i--) {
 //			try {
