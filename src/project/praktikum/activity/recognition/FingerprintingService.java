@@ -196,9 +196,9 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
 			      if (TextUtils.isEmpty(scanResult.SSID)) {
 			        continue;
 			      }
-			      db.insertFingerprintRecord("wifi", scanResult.BSSID, scanResult.SSID, scanResult.capabilities, scanResult.level, 0, 0, df);
+			      db.insertFingerprintRecord("wifi", scanResult.BSSID, scanResult.SSID, scanResult.capabilities, scanResult.level, (int)latitude, (int)longitude, df);
 			 }
-			 db.insertFingerprintRecord("location", "", "", "", 0, (int)latitude, (int)longitude, df);
+			 //db.insertFingerprintRecord("location", "", "", "", 0, (int)latitude, (int)longitude, df);
 //			insert(intent.getExtras().getString("fingerprints"));
 //			sendMessageToUI(1);
 					
