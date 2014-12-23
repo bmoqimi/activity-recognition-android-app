@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import project.praktikum.activity.recognition.R;
@@ -31,6 +32,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,6 +40,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.text.TextUtils;
 //import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
@@ -51,11 +54,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
 	/** indicates whether onRebind should be used */
 	boolean mAllowRebind;
 	private String TAG = "FingerprintingService";
-	private PendingIntent pIntent;
-//	private BroadcastReceiver receiver;
-	private ActivityRecognitionClient arclient;
 	private DataBase db;
-	private NoiseReduction noiseReduction;
 	ArrayList<Messenger> mClients = new ArrayList<Messenger>();
 	static final int MSG_FINGERPRINTING_REGISTER_CLIENT = 1;
 	static final int MSG_FINGERPRINTING_UNREGISTER_CLIENT = 2;
@@ -66,7 +65,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
 	// TextView mainText;
 	WifiManager mainWifi;
 	WifiReceiver receiverWifi;
-	// List<ScanResult> wifiList;
+	 List<ScanResult> wifiList;
 	// StringBuilder sb = new StringBuilder();
 	LocationManager locationManager;
 	
@@ -169,24 +168,6 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
 		return mStartMode;
 	}
 
-	@SuppressLint("SimpleDateFormat")
-	private void insert(String activity, int conf)
-	{
-		//Calendar c = Calendar.getInstance();
-		Log.i(TAG, "Recieved insert command with : " + activity);
-		SimpleDateFormat df = new SimpleDateFormat("MM/dd   HH:mm:ss");
-		//String date = df.format(c.getTime());
-		if (noiseReduction.newActivityDetected(activity)){
-			HashMap<String,Date> activities = noiseReduction.getActivities();
-			Iterator<Entry<String, Date>> it = activities.entrySet().iterator();
-			while (it.hasNext()){
-				Entry<String, Date> item = it.next();
-				db.insertRecord(item.getKey(), 0, df.format(item.getValue()));
-			}
-		}
-		//db.insertRecord(activity, conf, date);
-	}
-
 	/** Called when The service is no longer used and is being destroyed */
 	@Override
 	public void onDestroy() 
@@ -194,6 +175,8 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
 		unregisterReceiver(receiverWifi);
 		CellTowerlocationManager.removeUpdates(this);
 		Toast.makeText(this, "Fingerprinting service stopped.", Toast.LENGTH_LONG).show();
+		//Toast.makeText(this, db.fetchfingerprintsCount(), Toast.LENGTH_LONG).show();
+
 		cancelNotification(R.string.app_name);
 		isRunning = false;
 	}
@@ -203,14 +186,20 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
 		@SuppressLint("NewApi")
 		public void onReceive(Context c, Intent intent) {
 			// sb = new StringBuilder();
-			// wifiList = mainWifi.getScanResults();
-			// for (int i = 0; i < wifiList.size(); i++) {
-			// sb.append(new Integer(i + 1).toString() + "- ");
-			// sb.append((wifiList.get(i)).toString());
-			// sb.append(System.getProperty("line.separator"));
-			
-//			insert(intent.getExtras().getString("activity")
-//					,intent.getExtras().getInt("conf"));
+			 wifiList = mainWifi.getScanResults();
+			 String df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+			 for (int i = 0; i < wifiList.size(); i++) {
+				 final ScanResult scanResult=wifiList.get(i);
+			      if (scanResult == null) {
+			        continue;
+			      }
+			      if (TextUtils.isEmpty(scanResult.SSID)) {
+			        continue;
+			      }
+			      db.insertFingerprintRecord("wifi", scanResult.BSSID, scanResult.SSID, scanResult.capabilities, scanResult.level, 0, 0, df);
+			 }
+			 db.insertFingerprintRecord("location", "", "", "", 0, (int)latitude, (int)longitude, df);
+//			insert(intent.getExtras().getString("fingerprints"));
 //			sendMessageToUI(1);
 					
 		}

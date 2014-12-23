@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 public class DataBase extends SQLiteOpenHelper
@@ -42,6 +43,31 @@ public class DataBase extends SQLiteOpenHelper
 				+ " text)";
 
 		db.execSQL(createTable);
+		
+		createTable = "create table fingerprints"+
+				"( "
+				+ "_id"
+				+ " integer primary key AUTOINCREMENT, "
+				+ "type"
+				+ " text, "
+				+ "bssid"
+				+ " text, "
+				+ "ssid"
+				+ " text, "
+				+ "capabilities"
+				+ " text, "
+				+ "frequency"
+				+ " integer,"
+				+ "level"
+				+ " integer,"
+				+ "latitude"
+				+ " text, "
+				+ "longitude"
+				+ " text, "
+				+ "date"
+				+ " text)";
+
+		db.execSQL(createTable);
 	}
 
 	@Override
@@ -63,6 +89,33 @@ public class DataBase extends SQLiteOpenHelper
 		Log.i(TAG, "Inserting into " + TABLE_NAME + " " + activity + " On " + date.toString());
 		db.insert(TABLE_NAME, null, contentValues);
 		return true;
+	}
+
+	public boolean insertFingerprintRecord(String type, String bssid, String ssid, String capabilities, int level,
+			int latitude, int longitude, String date)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put("type", type);
+		contentValues.put("bssid", bssid);
+		contentValues.put("ssid", ssid);
+		contentValues.put("capabilities", capabilities);
+		contentValues.put("level", level);
+		contentValues.put("latitude", latitude);
+		contentValues.put("longitude", longitude);
+		contentValues.put("date", date);
+		Log.i(TAG, "Inserting into fingerprints on " + date.toString());
+		db.insert("fingerprints", null, contentValues);
+		return true;
+	}
+	
+	public String fetchfingerprintsCount() {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    String sql = "SELECT COUNT(*) FROM fingerprints";
+	    SQLiteStatement statement = db.compileStatement(sql);
+	    long count = statement.simpleQueryForLong();
+	    return Long.toString(count);
 	}
 
 	public void updateRecord(int index , int value)
