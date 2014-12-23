@@ -116,6 +116,7 @@ public class MainActivity extends Activity {
 			doBindService();
 		}
 	}
+	
 
 	private void updateLv() {
 		c = db.getAllRecords();
