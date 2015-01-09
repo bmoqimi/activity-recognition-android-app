@@ -6,6 +6,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+/**
+ * 
+ * @author Jalal
+ *
+ */
+
 public class LightSensor implements SensorEventListener{
 
 	 private SensorManager mSensorManager;
