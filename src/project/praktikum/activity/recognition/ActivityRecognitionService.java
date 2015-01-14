@@ -50,6 +50,8 @@ public class ActivityRecognitionService extends IntentService
 			return "Running";
 		else if(type == DetectedActivity.STILL)
 			return "Still";
+		else if(type == DetectedActivity.TILTING)
+			return "InVehicle";
 		else
 			return "Unknown";
 	}

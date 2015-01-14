@@ -149,11 +149,15 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		SimpleDateFormat df = new SimpleDateFormat("MM/dd   HH:mm:ss");
 		//String date = df.format(c.getTime());
 		if (noiseReduction.newActivityDetected(activity)){
-			HashMap<String,Date> activities = noiseReduction.getActivities();
-			Iterator<Entry<String, Date>> it = activities.entrySet().iterator();
+			HashMap<Date,String> activities = noiseReduction.getActivities();
+			Iterator<Entry<Date,String>> it = activities.entrySet().iterator();
+			int count = 0;
 			while (it.hasNext()){
-				Entry<String, Date> item = it.next();
-				db.insertRecord(item.getKey(), 0, df.format(item.getValue()));
+				count++;
+				Entry<Date,String> item = it.next();
+				db.insertRecord(item.getValue(), 0, df.format(item.getKey()));
+				Log.i(TAG, "Going through buffered activities for the " + count+"th time");
+				it.remove();
 			}
 		}
 		//db.insertRecord(activity, conf, date);

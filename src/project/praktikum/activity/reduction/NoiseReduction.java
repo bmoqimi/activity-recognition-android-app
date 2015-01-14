@@ -11,7 +11,7 @@ public class NoiseReduction {
 	private boolean atHome = false;
 	private String state = null;
 	private Date activityTimer = null;
-	private HashMap<String,Date> bufferedActivities = new HashMap<String, Date>();
+	private HashMap<Date,String> bufferedActivities = new HashMap<Date,String>();
 	private final HashMap<String,Boolean> TransitionsHomeTable = new HashMap<String,Boolean>(){
 		private static final long serialVersionUID = 754254727691411266L;
 
@@ -68,7 +68,7 @@ public class NoiseReduction {
 
 	{
 		put("Still:OnBicycle", 150);
-		put("Still:InVehicle", 120);
+		put("Still:InVehicle", 30);
 		put("Walking:OnBicycle", 60);
 		put("Walking:InVehicle", 60);
 		put("Running:OnBicycle", 60);
@@ -86,22 +86,29 @@ public class NoiseReduction {
 	public NoiseReduction(boolean atHome) {
 		this.atHome = atHome;
 		state = "Still";
+		this.activityTimer = new Date();
 	}
 	
-	public HashMap<String,Date> getActivities () {
-		HashMap<String,Date> temp = new HashMap<String,Date>(this.bufferedActivities);
+	public HashMap<Date,String> getActivities () {
+		HashMap<Date,String> temp = new HashMap<Date,String>(this.bufferedActivities);
 		bufferedActivities.clear();
 		return temp;
 	}
 	private boolean isThresholdPassed (String activity, Date detectionTime) {
 		String key = state + ":" + activity;
-		int threshold =  ThresholdTable.get(key);
+		int threshold = 0;
+		if(ThresholdTable.containsKey(key)) {
+			threshold =  ThresholdTable.get(key);
 		int passedTime = (int) (detectionTime.getTime() - activityTimer.getTime());
+		passedTime = passedTime / 1000;
+		Log.i(TAG, "Passed Time is: "+passedTime + " and threshold was: " + threshold);
 		if (passedTime > threshold)
 			return true;
 		else 
 			return false;
-	}
+		}
+		return false;
+		}
 	
 	private boolean isTransitionAllowed (String activity) {
 		if (atHome)
@@ -118,19 +125,23 @@ public class NoiseReduction {
 	}
 	
 	public boolean newActivityDetected(String activity) {
+		//if(activityTimer.equals(null))
+		//	this.activityTimer = new Date();
 		Date now = new Date();
 		Log.i(TAG, "New activity detected while State is: "+state+" and activity is: "+activity);
 		
 		if (state.equals(activity)){
 			bufferedActivities.clear();
-			bufferedActivities.put(activity, now);
+			bufferedActivities.put( now, activity);
+			this.activityTimer = new Date();//reset the timer
 			Log.i(TAG, "Circular Transition detected. Putting "+ activity + " into buffer.");
 			return true;
 		}
 		if(isTransitionAllowed(activity)) {
 			bufferedActivities.clear();
-			bufferedActivities.put(activity, now);
+			bufferedActivities.put(now, activity);
 			this.state = activity;
+			this.activityTimer = new Date();
 			Log.i(TAG, "Allowed Transition detected. Putting "+ activity + " into buffer.");
 			return true;
 		}
@@ -139,12 +150,13 @@ public class NoiseReduction {
 		}
 		if(isThresholdPassed(activity,now)) {
 			this.state = activity;
-			bufferedActivities.put(activity, now);
+			bufferedActivities.put(now, activity);
+			this.activityTimer = new Date();
 			Log.i(TAG, "Expired Threshold detected. Putting "+ activity + " into buffer.");
 			return true;
 		}
 		else {
-			bufferedActivities.put(activity, now);
+			bufferedActivities.put(now, activity);
 			Log.i(TAG, "Illegal Transition detected. Withholding "+ activity + " into buffer.");
 			return false;
 		}
