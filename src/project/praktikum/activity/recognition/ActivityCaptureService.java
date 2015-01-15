@@ -2,24 +2,19 @@ package project.praktikum.activity.recognition;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
-
 import project.praktikum.activity.recognition.ActivityRecognitionService;
 import project.praktikum.activity.recognition.MainActivity;
 import project.praktikum.activity.reduction.NoiseReduction;
 import project.praktikum.database.DataBase;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.ActivityRecognitionClient;
-
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -33,6 +28,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 public class ActivityCaptureService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,
@@ -96,20 +93,35 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		showNotification();
 	}
 
-	@SuppressWarnings("deprecation")
 	private void showNotification() {
-		nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-		// In this sample, we'll use the same text for the ticker and the expanded notification
-		CharSequence text = "Detecting your activity";
-		// Set the icon, scrolling text and timestamp
-		Notification notification = new Notification(R.drawable.ic_launcher, text, System.currentTimeMillis());
-		// The PendingIntent to launch our activity if the user selects this notification
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-		// Set the info for the views that show in the notification panel.
-		notification.setLatestEventInfo(this, ":D", text, contentIntent);
-		// Send the notification.
-		// We use a layout id because it is a unique number.  We use it later to cancel.
-		nm.notify(R.string.app_name, notification);
+		
+		NotificationCompat.Builder mBuilder =
+		        new NotificationCompat.Builder(this)
+		        .setSmallIcon(R.drawable.ic_launcher)
+		        .setContentTitle("Current activity")
+		        .setContentText("Nothing yet!!");
+		// Creates an explicit intent for an Activity in your app
+		Intent resultIntent = new Intent(this, MainActivity.class);
+
+		// The stack builder object will contain an artificial back stack for the
+		// started Activity.
+		// This ensures that navigating backward from the Activity leads out of
+		// your application to the Home screen.
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		// Adds the back stack for the Intent (but not the Intent itself)
+		stackBuilder.addParentStack(MainActivity.class);
+		// Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent =
+		        stackBuilder.getPendingIntent(
+		            0,
+		            PendingIntent.FLAG_UPDATE_CURRENT
+		        );
+		mBuilder.setContentIntent(resultPendingIntent);
+		nm =
+		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		// mId allows you to update the notification later on.
+		nm.notify(1366, mBuilder.build());
 	}
 
 	/** The service is starting, due to a call to startService() */
@@ -140,6 +152,17 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		registerReceiver(receiver, filter);
 		return mStartMode;
 	}
+	
+	private void updateNotification(String activity)
+	{
+		NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this)
+		    .setContentTitle("Current activity")
+		    .setContentText(activity)
+		    .setSmallIcon(R.drawable.ic_launcher);
+		    nm.notify(
+		            1366,
+		            mNotifyBuilder.build());
+	}
 
 	@SuppressLint("SimpleDateFormat")
 	private void insert(String activity, int conf)
@@ -149,6 +172,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		SimpleDateFormat df = new SimpleDateFormat("MM/dd   HH:mm:ss");
 		//String date = df.format(c.getTime());
 		if (noiseReduction.newActivityDetected(activity)){
+			updateNotification(activity);
 			HashMap<Date,String> activities = noiseReduction.getActivities();
 			Iterator<Entry<Date,String>> it = activities.entrySet().iterator();
 			int count = 0;
@@ -178,7 +202,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	}
 
 	public static void cancelNotification(int notifyId) {
-		nm.cancel(notifyId);
+		nm.cancel(1366);
 	}
 
 	@Override
