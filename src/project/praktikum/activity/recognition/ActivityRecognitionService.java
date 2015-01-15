@@ -1,5 +1,7 @@
 package project.praktikum.activity.recognition;
 
+import java.util.List;
+
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
@@ -24,12 +26,12 @@ public class ActivityRecognitionService extends IntentService
 		{
 			
 			ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-			String activity = getType(result.getMostProbableActivity().getType());
+			List<DetectedActivity>  onFootTypes = result.getProbableActivities();
+
+			String activity = getType(result.getMostProbableActivity().getType(), onFootTypes);
 			//Ignore Unknown,Tilting
+			Log.i(TAG, "raw activity detected as: "+activity);
 			if (activity != "Unknown" ) {
-			Log.i(TAG, activity +"t" 
-					+ result.getMostProbableActivity().getConfidence());
-			
 			Intent i = new Intent("project.praktikum.recognition.ACTIVITY_RECOGNITION_DATA");
 			i.putExtra("activity", activity);
 			i.putExtra("conf", result.getMostProbableActivity().getConfidence());
@@ -38,8 +40,9 @@ public class ActivityRecognitionService extends IntentService
 		}
 	}
 	 
-	private String getType(int type)
+	private String getType(int type, List<DetectedActivity> activities)
 	{
+		Log.d(TAG, "getType was called with raw type: " + type);
 		if(type == DetectedActivity.WALKING)
 			return "Walking";
 		else if(type == DetectedActivity.IN_VEHICLE)
@@ -52,6 +55,17 @@ public class ActivityRecognitionService extends IntentService
 			return "Still";
 		else if(type == DetectedActivity.TILTING)
 			return "InVehicle";
+		else if(type == DetectedActivity.ON_FOOT)
+		{
+			for (DetectedActivity item: activities) {
+				int footActivity = item.getType();
+				if (footActivity == DetectedActivity.WALKING)
+					return "Walking";
+				else if (footActivity == DetectedActivity.RUNNING)
+					return "Running";
+			}
+			return "Walking";
+		}
 		else
 			return "Unknown";
 	}
