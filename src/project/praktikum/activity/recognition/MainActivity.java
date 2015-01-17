@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
 		lv = (ListView) findViewById(R.id.lv);
 
 		c = db.getAllRecords();
-
+		
 		dbAdapter = new CustomCursorAdapter(getApplicationContext(), c, 0, db);
 
 		lv.setAdapter(dbAdapter);
