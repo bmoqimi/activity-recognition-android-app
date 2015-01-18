@@ -346,7 +346,7 @@ public class MainActivity extends Activity {
 	// }
 
 	 public void SetHome_OnClick(View view) {
-	 Intent intent = new Intent(this, SetHomeActivity.class);
+	 Intent intent = new Intent(this, SetHome.class);
 	 startActivity(intent);
 	 }
 
