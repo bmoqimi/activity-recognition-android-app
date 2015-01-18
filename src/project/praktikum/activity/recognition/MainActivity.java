@@ -345,9 +345,9 @@ public class MainActivity extends Activity {
 	// startActivity(Intent.createChooser(sendIntent, "Send Attachment !:"));
 	// }
 
-	// public void openlocarea(View view) {
-	// Intent intent = new Intent(this, GPSActivity.class);
-	// startActivity(intent);
-	// }
+	 public void SetHome_OnClick(View view) {
+	 Intent intent = new Intent(this, SetHomeActivity.class);
+	 startActivity(intent);
+	 }
 
 }

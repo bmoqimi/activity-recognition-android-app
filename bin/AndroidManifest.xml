@@ -56,6 +56,10 @@
             android:name=".MapActivity"
             android:label="@string/title_activity_map" >
         </activity>
+        <activity
+            android:name=".SetHomeActivity"
+            android:label="@string/title_activity_set_home" >
+        </activity>
     </application>
 
 </manifest>
