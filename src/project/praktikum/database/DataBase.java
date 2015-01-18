@@ -173,7 +173,6 @@ public boolean insertFingerprintHomeRecord(String type, String bssid, String ssi
 	public void deleteallrowsfingerprintshome() {
 		SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete("fingerprintshome", null, null);
-
 	}	
 
 	public void updateRecord(int index , int value)
