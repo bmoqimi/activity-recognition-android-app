@@ -68,6 +68,31 @@ public class DataBase extends SQLiteOpenHelper
 				+ " text)";
 
 		db.execSQL(createTable);
+		
+		createTable = "create table fingerprintshome"+
+				"( "
+				+ "_id"
+				+ " integer primary key AUTOINCREMENT, "
+				+ "type"
+				+ " text, "
+				+ "bssid"
+				+ " text, "
+				+ "ssid"
+				+ " text, "
+				+ "capabilities"
+				+ " text, "
+				+ "frequency"
+				+ " integer,"
+				+ "level"
+				+ " integer,"
+				+ "latitude"
+				+ " text, "
+				+ "longitude"
+				+ " text, "
+				+ "date"
+				+ " text)";
+
+		db.execSQL(createTable);
 	}
 
 	@Override
@@ -110,6 +135,25 @@ public class DataBase extends SQLiteOpenHelper
 		return true;
 	}
 	
+public boolean insertFingerprintHomeRecord(String type, String bssid, String ssid, String capabilities, int level,
+			int latitude, int longitude, String date)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put("type", type);
+		contentValues.put("bssid", bssid);
+		contentValues.put("ssid", ssid);
+		contentValues.put("capabilities", capabilities);
+		contentValues.put("level", level);
+		contentValues.put("latitude", latitude);
+		contentValues.put("longitude", longitude);
+		contentValues.put("date", date);
+		Log.i(TAG, "Inserting into fingerprintshome on " + date.toString());
+		db.insert("fingerprints", null, contentValues);
+		return true;
+	}
+	
 	public String fetchfingerprintsCount() {
 		SQLiteDatabase db = this.getWritableDatabase();
 	    String sql = "SELECT COUNT(*) FROM fingerprints";
@@ -117,6 +161,20 @@ public class DataBase extends SQLiteOpenHelper
 	    long count = statement.simpleQueryForLong();
 	    return Long.toString(count);
 	}
+	
+	public String fetchfingerprintshomeCount() {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    String sql = "SELECT COUNT(*) FROM fingerprintshome";
+	    SQLiteStatement statement = db.compileStatement(sql);
+	    long count = statement.simpleQueryForLong();
+	    return Long.toString(count);
+	}
+	
+	public void deleteallrowsfingerprintshome() {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    db.delete("fingerprintshome", null, null);
+
+	}	
 
 	public void updateRecord(int index , int value)
 	{
