@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="project.praktikum.Wifi.WifiActivity" >
+    tools:context="project.praktikum.activity.report.ShowReport" >
 
     <ScrollView
         android:id="@+id/scrollView1"
@@ -18,11 +18,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/listwifi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/title_activity_set_home" />
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/graph"
+                android:layout_width="match_parent"
+                android:layout_height="200dip" />
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/graph2"
+                android:layout_width="match_parent"
+                android:layout_height="200dip" />
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/graph3"
+                android:layout_width="match_parent"
+                android:layout_height="200dip" />
+            
         </LinearLayout>
     </ScrollView>
 

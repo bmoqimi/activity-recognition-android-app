@@ -1,6 +1,7 @@
 package project.praktikum.activity.recognition;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -32,7 +34,7 @@ import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SetHome extends Activity implements LocationListener {
+public class HomeRecognition extends Activity implements LocationListener {
 
 	TextView mainText;
 	WifiManager mainWifi;
@@ -40,9 +42,10 @@ public class SetHome extends Activity implements LocationListener {
 	List<ScanResult> wifiList;
 	StringBuilder sb = new StringBuilder();
 	LocationManager locationManager;
-
+	double totalFingerprintRows=0;
+	double matchedFingerprints=0;
 	private DataBase db;
-
+	double threshold=30;
 	private LocationManager CellTowerlocationManager;
 	private String provider;
 	double latitude;
@@ -68,21 +71,21 @@ public class SetHome extends Activity implements LocationListener {
 		}
 		mainWifi.startScan();
 		
-		CellTowerlocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		//CellTowerlocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-		Criteria criteria = new Criteria();
-		provider = CellTowerlocationManager.getBestProvider(criteria, false);
-		Location location = CellTowerlocationManager
-				.getLastKnownLocation(provider);
+//		Criteria criteria = new Criteria();
+//		provider = CellTowerlocationManager.getBestProvider(criteria, false);
+//		Location location = CellTowerlocationManager
+//				.getLastKnownLocation(provider);
 
 		// Initialize the location fields
-		if (location != null) {
+//		if (location != null) {
 			// System.out.println("Provider " + provider +
 			// " has been selected.");
-			onLocationChanged(location);
-		} else {
+//			onLocationChanged(location);
+//		} else {
 			// mainText.setText("Location not available");
-		}
+//		}
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,12 +122,13 @@ public class SetHome extends Activity implements LocationListener {
 		@SuppressLint("NewApi")
 		public void onReceive(Context c, Intent intent) {
 			
-			db.deleteallrowsfingerprintshome();
-			
 			wifiList = mainWifi.getScanResults();
 			String df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 					.format(new Date());
 
+			List<String> currentBSSIds = new ArrayList<String>();
+//			List<Integer> currentLats = new ArrayList<Integer>();
+//			List<Integer> currentLongs = new ArrayList<Integer>();
 			for (int i = 0; i < wifiList.size(); i++) {
 				final ScanResult scanResult = wifiList.get(i);
 				if (scanResult == null) {
@@ -133,23 +137,46 @@ public class SetHome extends Activity implements LocationListener {
 				if (TextUtils.isEmpty(scanResult.SSID)) {
 					continue;
 				}
-				db.insertFingerprintHomeRecord("wifi", scanResult.BSSID,
-						scanResult.SSID, scanResult.capabilities,
-						scanResult.level, (int) latitude, (int) longitude, df);
+				
+				currentBSSIds.add(scanResult.BSSID);
+//				currentLats.add((int) latitude);
+//				currentLongs.add((int) longitude);
 			}
-
-			SharedPreferences.Editor editor = getSharedPreferences(
-					"project.praktikum.activity.recognition", MODE_PRIVATE)
-					.edit();
-			editor.putString("IsHomeSet", "True");
-			editor.commit();
-			Toast.makeText(getApplicationContext(), "Home fingerprint created.", Toast.LENGTH_LONG).show();
-			finish();
 			
-			// db.insertFingerprintRecord("location", "", "", "", 0,
-			// (int)latitude, (int)longitude, df);
-			// insert(intent.getExtras().getString("fingerprints"));
-			// sendMessageToUI(1);
+			Cursor  cursor = db.fetchfingerprintshome();
+			
+			while (cursor.moveToNext()) {
+				 String dbbssid = cursor.getString(cursor.getColumnIndex("bssid"));
+				//	Toast.makeText(getApplicationContext(), dbbssid, Toast.LENGTH_SHORT).show();
+			//	 int dblat = Integer.parseInt(cursor.getString(cursor.getColumnIndex("latitude")));
+				// int dblong = Integer.parseInt(cursor.getString(cursor.getColumnIndex("longitude")));
+				 totalFingerprintRows+=1.0;
+				 
+				for (String bssid : currentBSSIds) 
+				{
+				    if(bssid.equals(dbbssid))
+				    {
+				    	matchedFingerprints+=1.0;
+				    	break;
+				    }
+				}
+			}
+			
+			double percentage=0;
+			if(totalFingerprintRows>0)
+				{
+				percentage=Math.ceil((matchedFingerprints*100.0)/totalFingerprintRows);
+				}
+			Toast.makeText(getApplicationContext(),"Similarity is: "+ String.valueOf(percentage)+"%", Toast.LENGTH_LONG).show();
+			if(percentage>=threshold)
+			{
+				//true
+			}
+			else
+			{
+				//false
+			}
+			finish();//to close the activity
 		}
 	}
 
@@ -170,15 +197,9 @@ public class SetHome extends Activity implements LocationListener {
 		// TODO Auto-generated method stub
 
 	}
-	
-//	public boolean isHomeSet()
-//	{
-//		SharedPreferences shared = getSharedPreferences("project.praktikum.activity.recognition", MODE_PRIVATE);
-//		return Boolean.valueOf(shared.getString("IsHomeSet", "False"));
-//	}
 
 //	@Override
 //	public void onDestroy() {
-//		Toast.makeText(this, db.fetchfingerprintshomeCount(), Toast.LENGTH_LONG).show();
+//		Toast.makeText(this, matchedFingerprints+" out of "+totalFingerprintRows, Toast.LENGTH_LONG).show();
 //	}
 }

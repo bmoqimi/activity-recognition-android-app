@@ -42,7 +42,21 @@
             android:layout_height="wrap_content"
             android:onClick="SetHome_OnClick"
             android:text="@string/button_set_home" />
+        
+        <Button
+            android:id="@+id/ButtonHomeSimilarity"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:onClick="HomeSimilarity_OnClick"
+            android:text="@string/button_home_Similarity" />
 
+        <Button
+            android:id="@+id/ButtonReport"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:onClick="ButtonReport_OnClick"
+            android:text="@string/ButtonReport" />
+                
         <ListView
             android:id="@+id/lv"
             android:layout_width="fill_parent"
@@ -51,8 +65,8 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="50px"
+        android:layout_height="50px"
         android:layout_weight="1"
         android:orientation="vertical" >
 

@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import project.praktikum.activity.recognition.ActivityCaptureService;
+import project.praktikum.activity.report.ShowReport;
 import project.praktikum.database.CustomCursorAdapter;
 import project.praktikum.database.DataBase;
 import android.annotation.SuppressLint;
@@ -19,6 +20,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -123,6 +125,11 @@ public class MainActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		SharedPreferences shared = getSharedPreferences("project.praktikum.activity.recognition", MODE_PRIVATE);
+		if(!Boolean.valueOf(shared.getString("IsHomeSet", "False")))
+			Toast.makeText(getApplicationContext(),"HOME IS NOT SET YET!", Toast.LENGTH_LONG).show();
+		
 		db = new DataBase(getApplicationContext());
 		lv = (ListView) findViewById(R.id.lv);
 
@@ -349,5 +356,14 @@ public class MainActivity extends Activity {
 	 Intent intent = new Intent(this, SetHome.class);
 	 startActivity(intent);
 	 }
-
+	 
+	 public void HomeSimilarity_OnClick(View view) {
+	 Intent intent = new Intent(this, HomeRecognition.class);
+	 startActivity(intent);
+	 }
+	 
+	 public void ButtonReport_OnClick(View view) {
+	 Intent intent = new Intent(this, ShowReport.class);
+	 startActivity(intent);
+	 }
 }

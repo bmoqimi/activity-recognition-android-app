@@ -150,7 +150,7 @@ public boolean insertFingerprintHomeRecord(String type, String bssid, String ssi
 		contentValues.put("longitude", longitude);
 		contentValues.put("date", date);
 		Log.i(TAG, "Inserting into fingerprintshome on " + date.toString());
-		db.insert("fingerprints", null, contentValues);
+		db.insert("fingerprintshome", null, contentValues);
 		return true;
 	}
 	
@@ -168,6 +168,11 @@ public boolean insertFingerprintHomeRecord(String type, String bssid, String ssi
 	    SQLiteStatement statement = db.compileStatement(sql);
 	    long count = statement.simpleQueryForLong();
 	    return Long.toString(count);
+	}
+	
+	public Cursor fetchfingerprintshome() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		return db.query("fingerprintshome", null, null, null, null, null, null, null);
 	}
 	
 	public void deleteallrowsfingerprintshome() {
