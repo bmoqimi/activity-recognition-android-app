@@ -307,7 +307,7 @@ public class MainActivity extends Activity {
 		File data = Environment.getDataDirectory();
 		FileChannel source = null;
 		FileChannel destination = null;
-		String currentDBPath = "/data/" + "project.praktikum.recognition"
+		String currentDBPath = "/data/" + "project.praktikum.activity.recognition"
 				+ "/databases/" + "MyDBName.db";
 		File currentDB = new File(data, currentDBPath);
 		Calendar c = Calendar.getInstance();
