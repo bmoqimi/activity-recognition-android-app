@@ -12,6 +12,7 @@ import android.telephony.CellInfo;
 import android.telephony.CellInfoGsm;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -40,7 +41,7 @@ public class SetHome extends Activity implements LocationListener {
 	List<ScanResult> wifiList;
 	StringBuilder sb = new StringBuilder();
 	LocationManager locationManager;
-
+	private String TAG = "SetHome";
 	private DataBase db;
 
 	private LocationManager CellTowerlocationManager;
@@ -52,6 +53,8 @@ public class SetHome extends Activity implements LocationListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wifi);
+
+		Log.i(TAG, "starting wifi scan...");
 
 		db = new DataBase(getApplicationContext());
 		
@@ -67,6 +70,8 @@ public class SetHome extends Activity implements LocationListener {
 			mainWifi.setWifiEnabled(true);
 		}
 		mainWifi.startScan();
+		Log.i(TAG, "wifi scan started.");
+		
 		
 		CellTowerlocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -109,6 +114,7 @@ public class SetHome extends Activity implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
+		Log.i(TAG, "onLocationChanged Called.");
 		latitude = (double) (location.getLatitude());
 		longitude = (double) (location.getLongitude());
 		// mainText.setText(String.valueOf(lat) + " , " + String.valueOf(lng));
@@ -118,13 +124,14 @@ public class SetHome extends Activity implements LocationListener {
 		@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 		@SuppressLint("NewApi")
 		public void onReceive(Context c, Intent intent) {
-			
+			Log.i(TAG, "BroadcastReceiver Called.");
 			db.deleteallrowsfingerprintshome();
 			
 			wifiList = mainWifi.getScanResults();
 			String df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 					.format(new Date());
 
+			Log.i(TAG, "saving fingerprint to db.");
 			for (int i = 0; i < wifiList.size(); i++) {
 				final ScanResult scanResult = wifiList.get(i);
 				if (scanResult == null) {
@@ -137,7 +144,8 @@ public class SetHome extends Activity implements LocationListener {
 						scanResult.SSID, scanResult.capabilities,
 						scanResult.level, (int) latitude, (int) longitude, df);
 			}
-
+			Log.i(TAG, "fingerprints saved to db.");
+			Log.i(TAG, "set SharedPreferences.");
 			SharedPreferences.Editor editor = getSharedPreferences(
 					"project.praktikum.activity.recognition", MODE_PRIVATE)
 					.edit();

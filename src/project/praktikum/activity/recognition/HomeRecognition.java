@@ -13,6 +13,7 @@ import android.telephony.CellInfo;
 import android.telephony.CellInfoGsm;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -50,17 +51,22 @@ public class HomeRecognition extends Activity implements LocationListener {
 	private String provider;
 	double latitude;
 	double longitude;
+	private String TAG = "Home Recognition";
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wifi);
+		Log.i(TAG, "onCreate started.");
 
 		db = new DataBase(getApplicationContext());
 		
 
 //		Toast.makeText(this, String.valueOf(isHomeSet()), Toast.LENGTH_LONG).show();
 
+		Log.i(TAG, "getting list of wifi...");
+		
 		mainText = (TextView) findViewById(R.id.listwifi);
 		mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		receiverWifi = new WifiReceiver();
@@ -100,11 +106,13 @@ public class HomeRecognition extends Activity implements LocationListener {
 	 */
 
 	protected void onPause() {
+		Log.i(TAG, "onPause called.");
 		unregisterReceiver(receiverWifi);
 		super.onPause();
 	}
 
 	protected void onResume() {
+		Log.i(TAG, "onResume called.");
 		registerReceiver(receiverWifi, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		super.onResume();
@@ -112,6 +120,7 @@ public class HomeRecognition extends Activity implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
+		Log.i(TAG, "onLocationchanged called");
 		latitude = (double) (location.getLatitude());
 		longitude = (double) (location.getLongitude());
 		// mainText.setText(String.valueOf(lat) + " , " + String.valueOf(lng));
@@ -122,9 +131,11 @@ public class HomeRecognition extends Activity implements LocationListener {
 		@SuppressLint("NewApi")
 		public void onReceive(Context c, Intent intent) {
 			
+			Log.i(TAG, "Getting list of available wifi");	
 			wifiList = mainWifi.getScanResults();
 			String df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 					.format(new Date());
+
 
 			List<String> currentBSSIds = new ArrayList<String>();
 //			List<Integer> currentLats = new ArrayList<Integer>();
@@ -142,8 +153,13 @@ public class HomeRecognition extends Activity implements LocationListener {
 //				currentLats.add((int) latitude);
 //				currentLongs.add((int) longitude);
 			}
-			
+			Log.i(TAG, "getting list of available wifi is done.");	
+			Log.i(TAG, "fetching fingerprint sample from db.");	
+
 			Cursor  cursor = db.fetchfingerprintshome();
+			
+			Log.i(TAG, "checking for compatibility...");	
+
 			
 			while (cursor.moveToNext()) {
 				 String dbbssid = cursor.getString(cursor.getColumnIndex("bssid"));
@@ -162,6 +178,7 @@ public class HomeRecognition extends Activity implements LocationListener {
 				}
 			}
 			
+			Log.i(TAG, "checking for compatibility is done.");	
 			double percentage=0;
 			if(totalFingerprintRows>0)
 				{
