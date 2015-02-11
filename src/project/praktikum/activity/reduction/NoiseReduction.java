@@ -10,6 +10,14 @@ public class NoiseReduction {
 	private String TAG = "NoiseReduction";
 	private boolean atHome = false;
 	private String state = null;
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
 	private Date activityTimer = null;
 	private HashMap<Date,String> bufferedActivities = new HashMap<Date,String>();
 	private final HashMap<String,Boolean> TransitionsHomeTable = new HashMap<String,Boolean>(){
