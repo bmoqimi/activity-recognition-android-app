@@ -357,10 +357,23 @@ public class MainActivity extends Activity {
 	 startActivity(intent);
 	 }
 	 
-	 public void HomeSimilarity_OnClick(View view) {
-	 Intent intent = new Intent(this, HomeRecognition.class);
-	 startActivity(intent);
-	 }
+		public void HomeSimilarity_OnClick(View view) {
+			Intent intent = new Intent(this, HomeRecognition.class);
+
+			// intent.setType(LOCATION_SERVICE);
+			startActivityForResult(intent, 1);
+			// startActivity(intent);
+		}
+
+		@Override
+		public void onActivityResult(int requestCode, int resultCode, Intent data) {
+			if (requestCode == 1) {
+				if (resultCode == RESULT_OK) {
+					boolean isHome = data.getBooleanExtra("isHome", false);
+					Toast.makeText(this, String.valueOf(isHome), Toast.LENGTH_SHORT).show();
+				}
+			}
+		}
 	 
 	 public void ButtonReport_OnClick(View view) {
 	 Intent intent = new Intent(this, ShowReport.class);

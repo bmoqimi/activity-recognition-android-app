@@ -58,10 +58,12 @@
         </activity>
         <activity
             android:name="project.praktikum.activity.recognition.SetHome"
+            android:theme="@android:style/Theme.NoDisplay"
             android:label="@string/set_home" >
         </activity>
         <activity
             android:name="project.praktikum.activity.recognition.HomeRecognition"
+            android:theme="@android:style/Theme.NoDisplay"
             android:label="@string/home_similarity" >
         </activity>
           <activity
