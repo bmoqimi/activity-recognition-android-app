@@ -48,14 +48,14 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	/**
 	 * We have set the earliest possible sleep time to 7pm
 	 */
-	static final int beginSleepCheckHour = 19;
+	static final int beginSleepCheckHour = 8;
 	static final int audioThreshold = 20;
 	static final int lightThreshold = 20;
-	static final int sleepCheckCycle = 20; /** In minutes */
-	static final double sensorCycleCheck = 0.25; /** Minutes */
+	static final double sleepCheckCycle = 2; /** In minutes */
+	static final long sensorCycleCheck = 15; /** In seconds */
 	private Date sleepingSince;
-	private boolean isSleep;
-	private boolean isAtHome;
+	private boolean isSleep = false;
+	private boolean isAtHome = true;;
 	boolean mAllowRebind;
 	private String TAG = "ActivityCaptureService";
 	private String SleepTag = "SleepDetection";
@@ -159,6 +159,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		    public void onReceive(Context context, Intent intent) {
 		        if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
 		          lastUserAction = new Date();
+		          Log.d(SleepTag, "We got a user present event");
 		           if(isSleep)
 		        	   wakeupSequence(1);
 		        	}
@@ -170,6 +171,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				/**
 				 * after we got notified when it is 7pm
 				 */
+				Log.i(SleepTag,"Called upon here");
 				if (intent.getExtras().containsKey("SleepDetectionWakeUp"))
 					Log.i(SleepTag, "Got called by AlarmService, starting sleep checking cycle" );
 					checkSleeping();
@@ -181,18 +183,19 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, beginSleepCheckHour);
-        calendar.set(Calendar.MINUTE, 0);
-        Intent alint = new Intent(ActivityCaptureService.this, ActivityCaptureService.class);
-        alint.putExtra("SleepDetectionWakeUp","SleepDetectionWakeUp");
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, alint, PendingIntent.FLAG_CANCEL_CURRENT);
-        alarm.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+        calendar.set(Calendar.HOUR_OF_DAY, 21);
+        calendar.set(Calendar.MINUTE, 24);
+        calendar.set(Calendar.SECOND, 0);
+        Intent alint = new Intent(getApplicationContext(), ActivityCaptureService.class);
+        //alint.putExtra("SleepDetectionWakeUp","SleepDetectionWakeUp");
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alint, 0);
+        //alarm.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),1000 * 60, alarmIntent);
         
-		lightSensor = new LightSensor(getApplicationContext(), lightThreshold);
+        sensorInProgress = false;
+        lightSensor = new LightSensor(getApplicationContext(), (float)lightThreshold);
 		audioSensor = new Recorder(audioThreshold);
 		
-		IntentFilter alarmFilter = new IntentFilter(Intent.ACTION_DEFAULT);
+		IntentFilter alarmFilter = new IntentFilter();
 		registerReceiver(alarmReceiver, alarmFilter);
 		
 		IntentFilter intentFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
@@ -222,6 +225,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		IntentFilter filter = new IntentFilter();
 		filter.addAction("project.praktikum.recognition.ACTIVITY_RECOGNITION_DATA");
 		registerReceiver(activityReceiver, filter);
+		lastUserAction = new Date();
+		checkSleeping();
 		return mStartMode;
 	}
 	
@@ -346,24 +351,52 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	
 	private void scheduleSleepTimer(double minutes){
 		long futureMillis = (long) minutes * 60 * 1000;
-		Log.i(SleepTag, "Setting a new count down timer for " + minutes + " minutes ");
 		CountDownTimer cnt = new CountDownTimer(futureMillis, futureMillis ) {
 			
 			@Override
 			public void onTick(long millisUntilFinished) {
 				// TODO Auto-generated method stub
+				Log.d(SleepTag, "Timer Ticked with ID " + this.hashCode());
 				return;
 			}
 			
 			@Override
 			public void onFinish() {
 				// TODO Auto-generated method stub
+				Log.d(SleepTag, "Timer with ID : " + this.hashCode() + "time is up.");
+
+				Log.i(SleepTag, "Timer ended, checking sleep conditions now.");
+				scheduleSleepTimer(sleepCheckCycle);
+				checkSleeping();
+			}
+		};
+		Log.i(SleepTag, "Setting a new count down timer for " + minutes + " minutes with ID: " + cnt.hashCode());
+		cnt.start();
+
+	}
+	
+	private void scheduleSensorTimer(long seconds){
+		long futureMillis =  seconds * 1000;
+		Log.i(SleepTag, "Setting a new count down timer for " + seconds + " seconds ");
+		CountDownTimer cnt = new CountDownTimer(futureMillis, futureMillis ) {
+			
+			@Override
+			public void onTick(long millisUntilFinished) {
+				// TODO Auto-generated method stub
+				Log.d(SleepTag, "Timer Ticked with ID " + this.hashCode());
+				return;
+			}
+			
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				Log.d(SleepTag, "Timer with ID : " + this.hashCode() + "time is up.");
 				if(sensorInProgress){
 					boolean light = lightSensor.stopListening();
 					boolean sound = audioSensor.stopRecording();
 					sensorInProgress = false;
-					if ( light || sound) {
-						Log.i(SleepTag, "Timer finished and sensory input indicates the user is asleep");
+					if ( light && sound) {
+						Log.d(SleepTag, "Timer finished and sensory input indicates the user is asleep");
 						
 						if(!isSleep)
 						{
@@ -373,50 +406,63 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 							SimpleDateFormat df = new SimpleDateFormat("MM/dd   HH:mm:ss");
 							Log.i(SleepTag, "First Sleeping event detected. Putting it in the database");
 							db.insertRecord("Sleeping", 0, df.format(sleepingSince));
+							scheduleSleepTimer(sleepCheckCycle);
+							return;
 						}
-						return;
+						
 					}
 					else {
+						Log.d(SleepTag, "Light and sensory input indicate the user is sleeping");
 						if(isSleep){
+							Log.i(SleepTag, "Wake up event because of light or audio sensory input detected.");
 							wakeupSequence(0);
+							return;
 						}
+						scheduleSleepTimer(sleepCheckCycle);
 					}
 				}
-				Log.i(SleepTag, "Timer ended, checking sleep conditions now.");
-				scheduleSleepTimer(sleepCheckCycle);
-				checkSleeping();
 			}
+			
 		};
+		Log.d(SleepTag, "Setting a new sensory timer for " + seconds + " seconds with ID: " + cnt.hashCode());
+		cnt.start();
 	}
 	public void checkSleeping(){
-		if(isAtHome) {
+		Log.d(SleepTag, "CheckSleep started. Will check all sleeping conditions now.");
+		if(!isAtHome) {
+			Log.d(SleepTag, "User is not at home so checking again later.");
 			scheduleSleepTimer(sleepCheckCycle);
 			return; 
 		  }
 		if(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < beginSleepCheckHour) {
+			Log.d(SleepTag, "CheckSleep started, Time of the day is before sleeping hours");
 			return;
 		}
 		Date tempDate = new Date();
-		int minutesSinceLastAction = (int) (((new Date().getTime() - sleepingSince.getTime()) / 1000 ) / 60);
+		int minutesSinceLastAction = (int) (((new Date().getTime() - lastUserAction.getTime()) / 1000 ) / 60);
 		if (minutesSinceLastAction < sleepCheckCycle)
 		{
+			Log.d(SleepTag, "CheckSleep started. The user was recently active on device.");
 			scheduleSleepTimer(sleepCheckCycle);
 			return;
 		}
+		Log.d(SleepTag, "Now getting sensory input");
 		lightSensor.startListening();
 		audioSensor.startRecording();
 		sensorInProgress = true;
 		Log.i(SleepTag, "Other sleeping conditions are met, checking sensory input");
-		scheduleSleepTimer(sensorCycleCheck);
+		scheduleSensorTimer(sensorCycleCheck);
 		
 	}
 	
-	private void wakeupSequence(int priority) { 
+	private void wakeupSequence(int priority) {
+		isSleep = false;
 		Log.i(SleepTag,"wakeup detected with priority " + priority );
 		Date wakeupDate = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("MM/dd   HH:mm:ss");
-		db.insertRecord("Still", 0, df.format(wakeupDate));
+		db.insertRecord("Wakeup", 0, df.format(wakeupDate));
 		noiseReduction.setState("Still");
 		lastUserAction = wakeupDate;
+		scheduleSleepTimer(sleepCheckCycle);
 	}
 }
