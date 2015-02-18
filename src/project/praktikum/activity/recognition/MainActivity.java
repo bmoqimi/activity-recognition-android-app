@@ -13,7 +13,6 @@ import project.praktikum.activity.report.ShowReport;
 import project.praktikum.database.CustomCursorAdapter;
 import project.praktikum.database.DataBase;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.ComponentName;
@@ -30,14 +29,18 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
 
 	DataBase db;
 	ListView lv;
@@ -130,7 +133,7 @@ public class MainActivity extends Activity {
 		if(!Boolean.valueOf(shared.getString("IsHomeSet", "False")))
 			Toast.makeText(getApplicationContext(),"HOME IS NOT SET YET!", Toast.LENGTH_LONG).show();
 		
-		db = new DataBase(getApplicationContext());
+		db = db.getInstance(getApplicationContext());
 		lv = (ListView) findViewById(R.id.lv);
 
 		c = db.getAllRecords();
@@ -366,4 +369,47 @@ public class MainActivity extends Activity {
 	 Intent intent = new Intent(this, ShowReport.class);
 	 startActivity(intent);
 	 }
+	 
+	 @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		 MenuInflater inflater = getMenuInflater();
+		 inflater.inflate(R.menu.main, menu);
+		 return true;
+	}
+	 
+	 @Override
+	 public boolean onOptionsItemSelected(MenuItem item) {
+	     // Handle item selection
+	     switch (item.getItemId()) {
+	         case R.id.action_settings:
+	             Intent intent = new Intent(getApplicationContext(), ActivityExpandableListView.class);
+	             startActivity(intent);
+	             return true;
+	         default:
+	             return super.onOptionsItemSelected(item);
+	     }
+	 }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,7 @@
 package project.praktikum.database;
 
 
+import android.R.string;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -19,10 +20,29 @@ public class DataBase extends SQLiteOpenHelper
 	public static final String COLUMN_CONF = "conf";
 	public static final String COLUMN_DATE = "date";
 	public static final String COLUMN_CORRECTNESS = "correct";
+	private static DataBase mInstance = null;
 
-	public DataBase(Context context)
+	public static DataBase getInstance(Context ctx) {
+        /** 
+         * use the application context as suggested by CommonsWare.
+         * this will ensure that you dont accidentally leak an Activitys
+         * context (see this article for more information: 
+         * http://android-developers.blogspot.nl/2009/01/avoiding-memory-leaks.html)
+         */
+        if (mInstance == null) {
+            mInstance = new DataBase(ctx.getApplicationContext());
+        }
+        return mInstance;
+    }
+	
+	private DataBase(Context context)
 	{
 		super(context, DATABASE_NAME , null, 1);
+	}
+	
+	public SQLiteDatabase getDB()
+	{
+		return this.getWritableDatabase();
 	}
 
 	@Override
@@ -40,6 +60,19 @@ public class DataBase extends SQLiteOpenHelper
 				+ COLUMN_CORRECTNESS
 				+ " integer,"
 				+ COLUMN_DATE
+				+ " text)";
+
+		db.execSQL(createTable);
+		
+		createTable = "create table timeline"+
+				"( "
+				+ "_id"
+				+ " integer primary key AUTOINCREMENT, "
+				+ "start"
+				+ " text, "
+				+ "end"
+				+ " text, "
+				+ "activity"
 				+ " text)";
 
 		db.execSQL(createTable);
@@ -101,6 +134,88 @@ public class DataBase extends SQLiteOpenHelper
 		db.execSQL("DROP TABLE IF EXISTS contacts");
 		onCreate(db);
 	}
+	
+	public void fillTimeLine()
+	{
+		Cursor c = getAllRecords(getLastDate());
+		int i = c.getCount();
+		if(c.moveToFirst())
+		{
+			String activity = "";
+			String start = "";
+			String end = "";
+			while(c.isAfterLast() == false)
+			{
+				String tmp = c.getString(c.getColumnIndex(COLUMN_ACTIVITY));
+				if(!tmp.equals(activity))
+				{
+					if(!activity.equals(""))
+					{
+						if(!activity.equals("Still"))
+							insertTimeLine(activity, start, end);
+					}
+					activity = tmp;
+					start = c.getString(c.getColumnIndex(COLUMN_DATE));
+				}
+				end = c.getString(c.getColumnIndex(COLUMN_DATE));
+				c.moveToNext();
+			}
+			if(!activity.equals("Still"))
+				insertTimeLine(activity, start, end);
+		}
+	}
+	
+	private void insertTimeLine(String activity , String start , String end)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put("activity", activity);
+		contentValues.put("start", end);
+		contentValues.put("end", end);
+		Log.i(TAG, "Inserting into timeline" + activity);
+		db.insert("timeline", null, contentValues);
+	}
+	
+	public Cursor fetchTimeLine()
+	{
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res =  db.query("timeline", null, null, null, null, null, null, null);
+		return res;
+	}
+	
+	private String getLastDate()
+	{
+		String ans = "2000-01-01 00:00:00";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res =  db.query("timeline", null, null, null, null, null, "_id DESC", "1");
+		if(res.getCount() > 0)
+		{
+			res.moveToFirst();
+			ans = res.getString(res.getColumnIndex("end"));
+		}
+		
+		return ans;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public boolean insertRecord  (String activity,int conf,String date)
 	{
@@ -192,6 +307,20 @@ public boolean insertFingerprintHomeRecord(String type, String bssid, String ssi
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor res =  db.query(TABLE_NAME, null, null, null, null, null, COLUMN_ID + " DESC", null);
+		return res;
+	}
+	
+	public Cursor getAllRecords(String date)
+	{
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res =  db.query(TABLE_NAME,
+				null,
+				COLUMN_DATE + " > Datetime('" + date + "')",
+				null,
+				null,
+				null,
+				null,
+				null);
 		return res;
 	}
 }

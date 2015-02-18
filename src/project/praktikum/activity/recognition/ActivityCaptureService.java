@@ -88,7 +88,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	/** Called when the service is being created. */
 	@Override
 	public void onCreate() {  
-		db = new DataBase(getApplicationContext());
+		db = db.getInstance(getApplicationContext());
 		isRunning = true;
 		showNotification();
 	}
@@ -187,7 +187,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	{
 		//Calendar c = Calendar.getInstance();
 		Log.i(TAG, "Recieved insert command with : " + activity);
-		SimpleDateFormat df = new SimpleDateFormat("MM/dd   HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		//String date = df.format(c.getTime());
 		if (noiseReduction.newActivityDetected(activity)){
 			updateNotification(activity);
@@ -202,7 +202,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				it.remove();
 			}
 		}
-		//db.insertRecord(activity, conf, date);
 	}
 
 	/** Called when The service is no longer used and is being destroyed */

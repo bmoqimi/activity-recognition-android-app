@@ -56,7 +56,7 @@ public class HomeRecognition extends Activity implements LocationListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wifi);
 
-		db = new DataBase(getApplicationContext());
+		db = db.getInstance(getApplicationContext());
 		
 
 //		Toast.makeText(this, String.valueOf(isHomeSet()), Toast.LENGTH_LONG).show();

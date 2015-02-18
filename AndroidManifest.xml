@@ -49,6 +49,10 @@
             android:label="@string/title_activity_wifi" >
         </activity>
         <activity
+            android:name=".ActivityExpandableListView"
+            android:label="ActivityExpandableListView" >
+        </activity>
+        <activity
             android:name=".GPSActivity"
             android:label="@string/title_activity_gps" >
         </activity>

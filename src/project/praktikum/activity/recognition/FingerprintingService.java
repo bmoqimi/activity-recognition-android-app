@@ -110,7 +110,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
 	/** Called when the service is being created. */
 	@Override
 	public void onCreate() {  
-		db = new DataBase(getApplicationContext());
+		db = db.getInstance(getApplicationContext());
 		isRunning = true;
 		showNotification();
 	}
