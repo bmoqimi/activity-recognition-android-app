@@ -1,7 +1,5 @@
 package project.praktikum.database;
 
-
-import android.R.string;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -137,32 +135,47 @@ public class DataBase extends SQLiteOpenHelper
 	
 	public void fillTimeLine()
 	{
-		Cursor c = getAllRecords(getLastDate());
-		int i = c.getCount();
-		if(c.moveToFirst())
+		Cursor cr = getAllRecords(getLastDate());
+		Cursor ct = fetchLasTimeLineRecord();
+		if(cr.moveToFirst())
 		{
 			String activity = "";
 			String start = "";
 			String end = "";
-			while(c.isAfterLast() == false)
+			while(cr.isAfterLast() == false)
 			{
-				String tmp = c.getString(c.getColumnIndex(COLUMN_ACTIVITY));
+				String tmp = cr.getString(cr.getColumnIndex(COLUMN_ACTIVITY));
+				if(ct.moveToFirst())
+				{
+					if(ct.getString(ct.getColumnIndex("activity")).equals(tmp))
+					{
+						activity = tmp;
+						start = ct.getString(ct.getColumnIndex("start"));
+						deteleTimeLineRecord(ct.getInt(ct.getColumnIndex("_id")));
+					}
+				}
 				if(!tmp.equals(activity))
 				{
 					if(!activity.equals(""))
 					{
-						if(!activity.equals("Still"))
+						//if(!activity.equals("Still"))
 							insertTimeLine(activity, start, end);
 					}
 					activity = tmp;
-					start = c.getString(c.getColumnIndex(COLUMN_DATE));
+					start = cr.getString(cr.getColumnIndex(COLUMN_DATE));
 				}
-				end = c.getString(c.getColumnIndex(COLUMN_DATE));
-				c.moveToNext();
+				end = cr.getString(cr.getColumnIndex(COLUMN_DATE));
+				cr.moveToNext();
 			}
-			if(!activity.equals("Still"))
+			//if(!activity.equals("Still"))
 				insertTimeLine(activity, start, end);
 		}
+	}
+	
+	private void deteleTimeLineRecord(int id)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete("timeline", "_id=" + id, null);
 	}
 	
 	private void insertTimeLine(String activity , String start , String end)
@@ -171,7 +184,7 @@ public class DataBase extends SQLiteOpenHelper
 		ContentValues contentValues = new ContentValues();
 
 		contentValues.put("activity", activity);
-		contentValues.put("start", end);
+		contentValues.put("start", start);
 		contentValues.put("end", end);
 		Log.i(TAG, "Inserting into timeline" + activity);
 		db.insert("timeline", null, contentValues);
@@ -180,7 +193,14 @@ public class DataBase extends SQLiteOpenHelper
 	public Cursor fetchTimeLine()
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor res =  db.query("timeline", null, null, null, null, null, null, null);
+		Cursor res =  db.query("timeline", null, null, null, null, null, "_id DESC", null);
+		return res;
+	}
+	
+	public Cursor fetchLasTimeLineRecord()
+	{
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res =  db.query("timeline", null, null, null, null, null, "_id DESC", "1");
 		return res;
 	}
 	
@@ -250,7 +270,7 @@ public class DataBase extends SQLiteOpenHelper
 		return true;
 	}
 	
-public boolean insertFingerprintHomeRecord(String type, String bssid, String ssid, String capabilities, int level,
+	public boolean insertFingerprintHomeRecord(String type, String bssid, String ssid, String capabilities, int level,
 			int latitude, int longitude, String date)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -313,6 +333,7 @@ public boolean insertFingerprintHomeRecord(String type, String bssid, String ssi
 	public Cursor getAllRecords(String date)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
+		//db.delete("timeline", null, null);
 		Cursor res =  db.query(TABLE_NAME,
 				null,
 				COLUMN_DATE + " > Datetime('" + date + "')",

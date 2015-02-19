@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 /**
  * 
@@ -21,6 +22,8 @@ public class LightSensor implements SensorEventListener{
 	 private int counter = 0;
 	 private float Threshold;
 	 Context ctx;
+	 private String SleepTag = "SleepDetection";
+
 	
 	 public LightSensor(Context ctx , float Threshold) 
 	 {
@@ -37,7 +40,8 @@ public class LightSensor implements SensorEventListener{
 	 
 	 public boolean stopListening()
 	 {
-	     mSensorManager.unregisterListener((SensorListener) ctx);
+	    // mSensorManager.unregisterListener((SensorListener) ctx);
+		 Log.d(SleepTag, "CurrentLux is: " + currentLux + " while Our Threshold was: "+ Threshold);
 	     return currentLux > Threshold ? false : true;
 	 }
 	

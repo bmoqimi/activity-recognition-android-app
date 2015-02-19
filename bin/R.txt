@@ -450,7 +450,7 @@ int id action_menu_presenter 0x7f090006
 int id action_mode_bar 0x7f09003f
 int id action_mode_bar_stub 0x7f09003e
 int id action_mode_close_button 0x7f090031
-int id action_settings 0x7f090068
+int id action_settings 0x7f09006a
 int id activity_chooser_view_content 0x7f090032
 int id always 0x7f090014
 int id beginning 0x7f09001b
@@ -487,8 +487,10 @@ int id icon 0x7f090037
 int id ifRoom 0x7f090016
 int id image 0x7f090034
 int id imgCurrentActivity 0x7f09005a
+int id lblActivity 0x7f090067
+int id lblEnd 0x7f090069
 int id lblListHeader 0x7f090066
-int id lblListItem 0x7f090067
+int id lblStart 0x7f090068
 int id listMode 0x7f09000a
 int id list_item 0x7f090036
 int id listwifi 0x7f090052

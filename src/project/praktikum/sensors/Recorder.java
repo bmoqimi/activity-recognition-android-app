@@ -30,6 +30,7 @@ public class Recorder
 	private int threshold = 1000;
 	private int sumLoud = 0;
 	private int maxLoud;
+	private String SleepTag = "SleepDetection";
 
 	public void setThreshold(int threshold) {
 		this.threshold = threshold;
@@ -147,6 +148,7 @@ public class Recorder
 			recorder = null;
 			recordingThread = null;
 		}
-		return maxLoud < sumLoud ? false : true;
+		Log.d(SleepTag, "CurrentLoudness is: " + sumLoud + " while Our Threshold was: "+ maxLoud);
+		return  sumLoud > maxLoud ? false : true;
 	}
 }

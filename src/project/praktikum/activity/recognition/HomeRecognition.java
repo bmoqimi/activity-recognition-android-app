@@ -31,6 +31,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -167,15 +168,18 @@ public class HomeRecognition extends Activity implements LocationListener {
 				{
 				percentage=Math.ceil((matchedFingerprints*100.0)/totalFingerprintRows);
 				}
-			Toast.makeText(getApplicationContext(),"Similarity is: "+ String.valueOf(percentage)+"%", Toast.LENGTH_LONG).show();
+			//Toast.makeText(getApplicationContext(),"Similarity is: "+ String.valueOf(percentage)+"%", Toast.LENGTH_LONG).show();
 			if(percentage>=threshold)
 			{
+			    intent.putExtra("isHome", true);
 				//true
 			}
 			else
 			{
+			    intent.putExtra("isHome", false);
 				//false
 			}
+			HomeRecognition.this.setResult(RESULT_OK, intent);
 			finish();//to close the activity
 		}
 	}
