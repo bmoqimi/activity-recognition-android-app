@@ -1,7 +1,8 @@
 package project.praktikum.activity.recognition;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +29,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
          
         // This Function used to inflate parent rows view
          
-        @Override
+        @SuppressLint("SimpleDateFormat")
+		@Override
         public View getGroupView(int groupPosition, boolean isExpanded, 
                 View convertView, ViewGroup parentView)
         {
@@ -38,7 +40,20 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
             convertView = inflater.inflate(R.layout.list_group, parentView, false); 
              
             // Get grouprow.xml file elements and set values
-            ((TextView) convertView.findViewById(R.id.lblListHeader)).setText(parent.getDate());
+            String date = new SimpleDateFormat("dd-MM-yyyy").format(parent.getDate());
+            ((TextView) convertView.findViewById(R.id.lblListHeader)).setText(date);
+            ((TextView) convertView.findViewById(R.id.lblListStill)).setText(
+            		"Still : " + String.valueOf(parent.getStill() / 60000));
+            ((TextView) convertView.findViewById(R.id.lblListSleep)).setText(
+            		"Sleep : " + String.valueOf(parent.getSleeping() / 60000));
+            ((TextView) convertView.findViewById(R.id.TextWalking)).setText(
+            		"Walking : " + String.valueOf(parent.getWalking() / 60000));
+            ((TextView) convertView.findViewById(R.id.TextRunning)).setText(
+            		"Running : " + String.valueOf(parent.getRunning() / 60000));
+            ((TextView) convertView.findViewById(R.id.TextDriving)).setText(
+            		"Driving : " + String.valueOf(parent.getDriving() / 60000));
+            ((TextView) convertView.findViewById(R.id.TextCycling)).setText(
+            		"Cycling : " + String.valueOf(parent.getCycling() / 60000));
              
             //Log.i("onCheckedChanged", "isChecked: "+parent.isChecked());
              
@@ -61,6 +76,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
             ((TextView) convertView.findViewById(R.id.lblActivity)).setText(child.getActivity());
             ((TextView) convertView.findViewById(R.id.lblStart)).setText(child.getStart());
             ((TextView) convertView.findViewById(R.id.lblEnd)).setText(child.getEnd());
+            ((TextView) convertView.findViewById(R.id.lblDuration)).setText("Duration : "
+            		+ String.valueOf(child.getDuration()/60000) + " minutes");
              
             return convertView;
         }

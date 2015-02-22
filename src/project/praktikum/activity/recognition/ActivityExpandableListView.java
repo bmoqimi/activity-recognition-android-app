@@ -38,7 +38,7 @@ public class ActivityExpandableListView extends ExpandableListActivity {
 
         if(aDate==null) return null;
         ParsePosition pos = new ParsePosition(0);
-        SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+        SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Date stringDate = simpledateformat.parse(aDate, pos);
         return stringDate;            
 
@@ -59,6 +59,35 @@ public class ActivityExpandableListView extends ExpandableListActivity {
         }   
     }
     
+    private void setActivityTime(Parent parent , long amount , String activity)
+    {
+    	if(activity.equals("Still"))
+    	{
+    		parent.setStill(parent.getStill() + amount);
+    	}
+    	
+    	else if(activity.equals("Walking"))
+    	{
+    		parent.setWalking(parent.getWalking() + amount);
+    	}
+    	else if(activity.equals("Sleeping"))
+    	{
+    		parent.setSleeping(parent.getSleeping() + amount);
+    	}
+    	else if(activity.equals("InVehicle"))
+    	{
+    		parent.setDriving(parent.getDriving() + amount);
+    	}
+    	else if(activity.equals("OnBicycle"))
+    	{
+    		parent.setCycling(parent.getCycling() + amount);
+    	}
+    	else if(activity.equals("Running"))
+    	{
+    		parent.setRunning(parent.getRunning() + amount);
+    	}
+    }
+    
     @SuppressWarnings("deprecation")
 	private ArrayList<Parent> prepareListData() {
     	
@@ -74,7 +103,7 @@ public class ActivityExpandableListView extends ExpandableListActivity {
     			Parent header = new Parent();
     			currentActivity = stringToDate(c.getString(2));
             	currentDay = currentActivity;
-            	header.setDate(currentDay.toString());
+            	header.setDate(currentDay);
             	
             	ArrayList<Child> children = new ArrayList<Child>();
             	
@@ -84,7 +113,13 @@ public class ActivityExpandableListView extends ExpandableListActivity {
     				mChild.setActivity(c.getString(c.getColumnIndex("activity")));
     				mChild.setStart(c.getString(c.getColumnIndex("start")));
     				mChild.setEnd(c.getString(c.getColumnIndex("end")));
+    				mChild.setDuration(
+    						stringToDate(mChild.getEnd()).getTime() - 
+    						stringToDate(mChild.getStart()).getTime());
     				children.add(mChild);
+    				setActivityTime(header,
+    						stringToDate(mChild.getEnd()).getTime() - stringToDate(mChild.getStart()).getTime(),
+    						mChild.getActivity());
     				c.moveToNext();
     				if(!c.isAfterLast())
     					currentActivity = stringToDate(c.getString(2));

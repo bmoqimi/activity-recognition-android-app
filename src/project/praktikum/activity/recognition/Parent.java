@@ -1,62 +1,72 @@
 package project.praktikum.activity.recognition;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Parent {
-	private String Running;
-    private String Walking;
-    private String Sleeping;
-    private String Cycling;
-    private String Driving;
-    private String Date;
+	private long Running = 0;
+    private long Walking = 0;
+    private long Sleeping = 0;
+    private long Cycling = 0;
+    private long Driving = 0;
+    private long Still = 0;
+	private Date Date;
      
+	public long getStill() {
+		return Still;
+	}
+
+	public void setStill(long still) {
+		Still = still;
+	}
+	
     private ArrayList<Child> children;
      
-    public String getRunning() {
+    public long getRunning() {
 		return Running;
 	}
 
-	public void setRunning(String running) {
+	public void setRunning(long running) {
 		Running = running;
 	}
 
-	public String getWalking() {
+	public long getWalking() {
 		return Walking;
 	}
 
-	public void setWalking(String walking) {
+	public void setWalking(long walking) {
 		Walking = walking;
 	}
 
-	public String getSleeping() {
+	public long getSleeping() {
 		return Sleeping;
 	}
 
-	public void setSleeping(String sleeping) {
+	public void setSleeping(long sleeping) {
 		Sleeping = sleeping;
 	}
 
-	public String getCycling() {
+	public long getCycling() {
 		return Cycling;
 	}
 
-	public void setCycling(String cycling) {
+	public void setCycling(long cycling) {
 		Cycling = cycling;
 	}
 
-	public String getDriving() {
+	public long getDriving() {
 		return Driving;
 	}
 
-	public void setDriving(String driving) {
+	public void setDriving(long driving) {
 		Driving = driving;
 	}
 
-	public String getDate() {
+	public Date getDate() {
 		return Date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		Date = date;
 	}
 

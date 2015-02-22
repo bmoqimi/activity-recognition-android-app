@@ -5,7 +5,7 @@ public class Child {
 	private String Activity;
     private String Start;
     private String End;
-    private String Duration;
+    private long Duration;
     
 	public String getActivity() {
 		return Activity;
@@ -25,10 +25,10 @@ public class Child {
 	public void setEnd(String end) {
 		End = end;
 	}
-	public String getDuration() {
+	public long getDuration() {
 		return Duration;
 	}
-	public void setDuration(String duration) {
+	public void setDuration(long duration) {
 		Duration = duration;
 	}
 }
