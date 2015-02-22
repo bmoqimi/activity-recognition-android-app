@@ -49,9 +49,9 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	 * We have set the earliest possible sleep time to 7pm
 	 */
 	static final int beginSleepCheckHour = 8;
-	static final int audioThreshold = 20;
+	static final int audioThreshold = 60;
 	static final int lightThreshold = 20;
-	static final double sleepCheckCycle = 2; /** In minutes */
+	static final double sleepCheckCycle = 1; /** In minutes */
 	static final long sensorCycleCheck = 15; /** In seconds */
 	private Date sleepingSince;
 	private boolean isSleep = false;
@@ -357,7 +357,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			public void onTick(long millisUntilFinished) {
 				// TODO Auto-generated method stub
 				Log.d(SleepTag, "Timer Ticked with ID " + this.hashCode());
-				return;
+				//return;
 			}
 			
 			@Override
@@ -434,7 +434,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			scheduleSleepTimer(sleepCheckCycle);
 			return; 
 		  }
-		if(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < beginSleepCheckHour) {
+		int currentTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+		if(currentTime > beginSleepCheckHour) {
 			Log.d(SleepTag, "CheckSleep started, Time of the day is before sleeping hours");
 			return;
 		}

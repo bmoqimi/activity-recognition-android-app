@@ -40,7 +40,6 @@ public class Recorder
 	public Recorder(int maxLoud)
 	{
 		this.maxLoud = maxLoud;
-		//this.txt = txt;
 	}
 	
 	private AudioRecord findAudioRecord() {
@@ -76,7 +75,8 @@ public class Recorder
 	     
 	public void startRecording()
 	{
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stu
+		sumLoud = 0;
 		recorder = findAudioRecord();
 		
         if(recorder.getState()==AudioRecord.STATE_INITIALIZED)
@@ -125,7 +125,7 @@ public class Recorder
 				sum += (input[i * 100 + j] * input[i * 100 + j]);
 			}
 			ans[i] = (int) Math.sqrt((double)(sum/j));
-			if(ans[i] > threshold)
+			if(ans[i] > maxLoud)
 			{
 				sumLoud++;
 				Log.i("sumLoud" , String.valueOf(sumLoud));
@@ -149,6 +149,6 @@ public class Recorder
 			recordingThread = null;
 		}
 		Log.d(SleepTag, "CurrentLoudness is: " + sumLoud + " while Our Threshold was: "+ maxLoud);
-		return  sumLoud > maxLoud ? false : true;
+		return  sumLoud > threshold ? false : true;
 	}
 }
