@@ -8,5 +8,35 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_report"
+        android:orderInCategory="100"
+        android:title="Get report"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_export"
+        android:orderInCategory="100"
+        android:title="Expotr database"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_service"
+        android:orderInCategory="100"
+        android:title="Start capturing activity"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_fingertpring"
+        android:orderInCategory="100"
+        android:title="Start fingerprinting"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_sethome"
+        android:orderInCategory="100"
+        android:title="Set here as home"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_home_similarity"
+        android:orderInCategory="100"
+        android:title="get home similarity"
+        app:showAsAction="never"/>
 
 </menu>

@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <LinearLayout
+<!--    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
@@ -76,6 +76,12 @@
             android:layout_height="fill_parent"
             android:layout_margin="0dp"
             android:src="@drawable/ic_launcher" />
-    </LinearLayout>
+    </LinearLayout>-->
+
+    <ExpandableListView
+        android:id="@+id/expandableListView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </ExpandableListView>
 
 </LinearLayout>
