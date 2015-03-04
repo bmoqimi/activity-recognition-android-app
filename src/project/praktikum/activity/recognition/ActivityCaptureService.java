@@ -48,10 +48,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	/**
 	 * We have set the earliest possible sleep time to 7pm
 	 */
-	static final int beginSleepCheckHour = 8;
-	static final int audioThreshold = 60;
-	static final int lightThreshold = 20;
-	static final double sleepCheckCycle = 1; /** In minutes */
+	static final int beginSleepCheckHour = 18;
+	static final int morningSleepCycleEnd = 8;
+	static final int audioThreshold = 100;
+	static final int lightThreshold = 2;
+	static final double sleepCheckCycle = 20; /** In minutes */
 	static final long sensorCycleCheck = 15; /** In seconds */
 	private Date sleepingSince;
 	private boolean isSleep = false;
@@ -363,6 +364,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			@Override
 			public void onFinish() {
 				// TODO Auto-generated method stub
+				if (!isRunning)
+									return;
 				Log.d(SleepTag, "Timer with ID : " + this.hashCode() + "time is up.");
 
 				Log.i(SleepTag, "Timer ended, checking sleep conditions now.");
@@ -390,11 +393,14 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			@Override
 			public void onFinish() {
 				// TODO Auto-generated method stub
+				if (!isRunning)
+					return;
 				Log.d(SleepTag, "Timer with ID : " + this.hashCode() + "time is up.");
 				if(sensorInProgress){
 					boolean light = lightSensor.stopListening();
 					boolean sound = audioSensor.stopRecording();
 					sensorInProgress = false;
+					Log.d(SleepTag, "Timer finished; Light is: " + light + " and sound is : " + sound);
 					if ( light && sound) {
 						Log.d(SleepTag, "Timer finished and sensory input indicates the user is asleep");
 						
@@ -406,19 +412,19 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 							SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 							Log.i(SleepTag, "First Sleeping event detected. Putting it in the database");
 							db.insertRecord("Sleeping", 0, df.format(sleepingSince));
-							scheduleSleepTimer(sleepCheckCycle);
+							//scheduleSleepTimer(sleepCheckCycle);
 							return;
 						}
 						
 					}
 					else {
-						Log.d(SleepTag, "Light and sensory input indicate the user is sleeping");
+						Log.d(SleepTag, "Light and sensory input indicate the user is NOT sleeping");
 						if(isSleep){
 							Log.i(SleepTag, "Wake up event because of light or audio sensory input detected.");
 							wakeupSequence(0);
 							return;
 						}
-						scheduleSleepTimer(sleepCheckCycle);
+						//scheduleSleepTimer(sleepCheckCycle);
 					}
 				}
 			}
@@ -435,9 +441,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			return; 
 		  }
 		int currentTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-		if(currentTime > beginSleepCheckHour) {
-			Log.d(SleepTag, "CheckSleep started, Time of the day is before sleeping hours");
-			return;
+		if(currentTime < beginSleepCheckHour ) {
+			if(currentTime > morningSleepCycleEnd) {
+				Log.d(SleepTag, "CheckSleep started, Time of the day is before sleeping hours");
+				return;
+			}
 		}
 		Date tempDate = new Date();
 		int minutesSinceLastAction = (int) (((new Date().getTime() - lastUserAction.getTime()) / 1000 ) / 60);
@@ -464,6 +472,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		db.insertRecord("Wakeup", 0, df.format(wakeupDate));
 		noiseReduction.setState("Still");
 		lastUserAction = wakeupDate;
-		scheduleSleepTimer(sleepCheckCycle);
+		//scheduleSleepTimer(sleepCheckCycle);
 	}
 }
