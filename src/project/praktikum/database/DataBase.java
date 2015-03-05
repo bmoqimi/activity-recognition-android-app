@@ -1,5 +1,9 @@
 package project.praktikum.database;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -133,10 +137,22 @@ public class DataBase extends SQLiteOpenHelper
 		onCreate(db);
 	}
 	
+	private boolean compareDates(String fi , String sec) throws ParseException
+	{
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date dFi = new Date(),dSec = new Date();
+		dFi = df.parse(fi);
+		dSec = df.parse(sec);
+		long diff = Math.abs(dFi.getTime() - dSec.getTime());
+		return false;
+	}
+	
 	public void fillTimeLine()
 	{
+		
 		Cursor cr = getAllRecords(getLastDate());
 		Cursor ct = fetchLasTimeLineRecord();
+		//deteleAllTimeLineRecords();
 		if(cr.moveToFirst())
 		{
 			String activity = "";
@@ -145,15 +161,16 @@ public class DataBase extends SQLiteOpenHelper
 			while(cr.isAfterLast() == false)
 			{
 				String tmp = cr.getString(cr.getColumnIndex(COLUMN_ACTIVITY));
-				if(ct.moveToFirst())
-				{
-					if(ct.getString(ct.getColumnIndex("activity")).equals(tmp))
-					{
-						activity = tmp;
-						start = ct.getString(ct.getColumnIndex("start"));
-						deteleTimeLineRecord(ct.getInt(ct.getColumnIndex("_id")));
-					}
-				}
+				//if(ct.moveToFirst())
+				//{
+					//if(ct.getString(ct.getColumnIndex("activity")).equals(tmp)
+					//		&& compareDates(ct.getString(ct.getColumnIndex("start")),cr.getString(cr.getColumnIndex(COLUMN_DATE)) ))
+				//	{
+				//		activity = tmp;
+				//		start = ct.getString(ct.getColumnIndex("start"));
+				//		deteleTimeLineRecord(ct.getInt(ct.getColumnIndex("_id")));
+				//	}
+				//}
 				if(!tmp.equals(activity))
 				{
 					if(!activity.equals(""))
@@ -170,6 +187,12 @@ public class DataBase extends SQLiteOpenHelper
 			//if(!activity.equals("Still"))
 				insertTimeLine(activity, start, end);
 		}
+	}
+	
+	private void deteleAllTimeLineRecords()
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete("timeline", null, null);
 	}
 	
 	private void deteleTimeLineRecord(int id)

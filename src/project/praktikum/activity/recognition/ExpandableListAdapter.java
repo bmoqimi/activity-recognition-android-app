@@ -97,7 +97,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
             ((TextView) convertView.findViewById(R.id.lblStart)).setText(child.getStart());
             ((TextView) convertView.findViewById(R.id.lblEnd)).setText(child.getEnd());
             ((TextView) convertView.findViewById(R.id.lblDuration)).setText("Duration : "
-            		+ String.valueOf(child.getDuration()/60000) + " minutes");
+            		+ getHourString(child.getDuration()));
             exList.setDividerHeight(0);
             return convertView;
         }
