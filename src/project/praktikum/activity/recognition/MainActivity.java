@@ -251,7 +251,7 @@ public class MainActivity extends ActionBarActivity {
             return;
         if (xLv.getExpandableListAdapter() == null)
         {
-            final ExpandableListAdapter mAdapter = new ExpandableListAdapter(this , newParents);
+            final ExpandableListAdapter mAdapter = new ExpandableListAdapter(this , newParents,xLv);
             xLv.setAdapter(mAdapter);
         }
         else

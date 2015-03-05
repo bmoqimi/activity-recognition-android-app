@@ -2,39 +2,63 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
- 
-    <TextView
-        android:id="@+id/lblActivity"
+    android:orientation="vertical"
+    android:background="#E9EFF2" >
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/imgActivity"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_launcher" />
+
+        <TextView
+            android:id="@+id/lblDuration"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:paddingTop="5dp"
+            android:textSize="17dip" />
+
+    </TableRow>
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="17dip"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft" />
-    <TextView
-        android:id="@+id/lblStart"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="17dip"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft" />
-    <TextView
-        android:id="@+id/lblEnd"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="17dip"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft" />
-    <TextView
-        android:id="@+id/lblDuration"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="17dip"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft" />
+        android:orientation="vertical" >
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/lblStart"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingBottom="5dp"
+                android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+                android:paddingTop="5dp"
+                android:textSize="17dip" />
+
+            <TextView
+                android:id="@+id/lblEnd"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingBottom="5dp"
+                android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+                android:paddingTop="5dp"
+                android:textSize="17dip" />
+
+        </TableRow>
+
+    </LinearLayout>
  
 </LinearLayout>

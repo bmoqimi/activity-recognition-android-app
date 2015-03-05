@@ -50,7 +50,7 @@ public class ActivityExpandableListView extends ExpandableListActivity {
             return;
         if (this.getExpandableListAdapter() == null)
         {
-            final ExpandableListAdapter mAdapter = new ExpandableListAdapter(this , newParents);
+            final ExpandableListAdapter mAdapter = new ExpandableListAdapter(this , newParents,this.getExpandableListView());
             this.setListAdapter(mAdapter);
         }
         else

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#000000">
+    android:background="#E1E4ED">
  
  
     <TextView
@@ -13,12 +13,18 @@
         android:layout_height="wrap_content"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
         android:textSize="17dp"
-        android:textColor="#f9f93d" />
+        android:textColor="#000000" />
 
     <TableRow
         android:id="@+id/tableRow1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/imgSleep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sleeping" />
 
         <TextView
             android:id="@+id/lblListSleep"
@@ -26,8 +32,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-            android:textColor="#f9f93d"
+            android:textColor="#000000"
             android:textSize="17dp" />
+
+        <ImageView
+            android:id="@+id/imgStill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/standing" />
 
         <TextView
             android:id="@+id/lblListStill"
@@ -35,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-            android:textColor="#f9f93d"
+            android:textColor="#000000"
             android:textSize="17dp" />
 
     </TableRow>
@@ -45,14 +57,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
+        <ImageView
+            android:id="@+id/imgWalking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/walking" />
+
         <TextView
             android:id="@+id/TextWalking"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-            android:textColor="#f9f93d"
+            android:textColor="#000000"
             android:textSize="17dp" />
+
+        <ImageView
+            android:id="@+id/imgRunning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/running" />
 
         <TextView
             android:id="@+id/TextRunning"
@@ -60,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-            android:textColor="#f9f93d"
+            android:textColor="#000000"
             android:textSize="17dp" />
     </TableRow>
 
@@ -69,14 +93,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
+        <ImageView
+            android:id="@+id/imgDriving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/driving" />
+
         <TextView
             android:id="@+id/TextDriving"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-            android:textColor="#f9f93d"
+            android:textColor="#000000"
             android:textSize="17dp" />
+
+        <ImageView
+            android:id="@+id/imgCycling"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/biking" />
 
         <TextView
             android:id="@+id/TextCycling"
@@ -84,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-            android:textColor="#f9f93d"
+            android:textColor="#000000"
             android:textSize="17dp" />
     </TableRow>
  
