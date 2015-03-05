@@ -37,7 +37,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -49,6 +51,8 @@ public class MainActivity extends ActionBarActivity {
 	ListView lv;
 	Cursor c;
 	CustomCursorAdapter dbAdapter;
+	View hvw;
+	ImageView imgCurrentActivity;
 
 	boolean isServiceRunning;
 	boolean isFingerprintingServiceRunning;
@@ -147,9 +151,16 @@ public class MainActivity extends ActionBarActivity {
 		//lv.setAdapter(dbAdapter);
 		xLv = (ExpandableListView) findViewById(R.id.expandableListView1);
 		
+        hvw = (View)getLayoutInflater().inflate(R.layout.lv_header,null);
+        //Suppose you have one textview in that Row
+        //ImageView img = (ImageView) hvw.findViewById(R.id.img_header); // get textview object
+
+        imgCurrentActivity = (ImageView) hvw.findViewById(R.id.img_header);
+		
 		db.fillTimeLine();
         
         loadHosts(prepareListData()); 
+        xLv.addHeaderView(hvw); // add header view
 
 		isFingerprintingServiceRunning = isMyServiceRunning(FingerprintingService.class);
 		//btnFingerprinting = (Button) findViewById(R.id.ButtonFingerprintingService);
@@ -279,20 +290,20 @@ public class MainActivity extends ActionBarActivity {
 		dbAdapter.changeCursor(c);
 		dbAdapter.notifyDataSetChanged();
 	}
-
+	
 	private void setImgCurrentActivity(String avtivity) {
-		if (avtivity.equals("Unknown")) {
-			//imgCurrentActivity.setImageResource(R.drawable.unknown);
-		} else if (avtivity.equals("In Vehicle")) {
-			//imgCurrentActivity.setImageResource(R.drawable.in_vehicle);
-		} else if (avtivity.equals("On Bicycle")) {
-			//imgCurrentActivity.setImageResource(R.drawable.on_bike);
-		} else if (avtivity.equals("On Foot")) {
-			//imgCurrentActivity.setImageResource(R.drawable.on_foot);
+		if (avtivity.equals("Walking")) {
+			imgCurrentActivity.setImageResource(R.drawable.walking);
+		} else if (avtivity.equals("InVehicle")) {
+			imgCurrentActivity.setImageResource(R.drawable.driving);
+		} else if (avtivity.equals("OnBicycle")) {
+			imgCurrentActivity.setImageResource(R.drawable.biking);
+		} else if (avtivity.equals("Running")) {
+			imgCurrentActivity.setImageResource(R.drawable.running);
 		} else if (avtivity.equals("Still")) {
-			//imgCurrentActivity.setImageResource(R.drawable.still);
+			imgCurrentActivity.setImageResource(R.drawable.standing);
 		} else {
-			//imgCurrentActivity.setImageResource(R.drawable.tillting);
+			imgCurrentActivity.setImageResource(R.drawable.sleeping);
 		}
 	}
 
