@@ -25,6 +25,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -43,7 +44,7 @@ public class SetHome extends Activity implements LocationListener {
 	LocationManager locationManager;
 	private String TAG = "SetHome";
 	private DataBase db;
-
+	boolean wifiStatus = false;
 	private LocationManager CellTowerlocationManager;
 	private String provider;
 	double latitude;
@@ -63,6 +64,9 @@ public class SetHome extends Activity implements LocationListener {
 
 		mainText = (TextView) findViewById(R.id.listwifi);
 		mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+
+		wifiStatus = mainWifi.isWifiEnabled();
+
 		receiverWifi = new WifiReceiver();
 		registerReceiver(receiverWifi, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
@@ -152,6 +156,8 @@ public class SetHome extends Activity implements LocationListener {
 			editor.putString("IsHomeSet", "True");
 			editor.commit();
 			Toast.makeText(getApplicationContext(), "Home fingerprint created.", Toast.LENGTH_LONG).show();
+			if(!wifiStatus)
+				mainWifi.setWifiEnabled(false);
 			finish();
 			
 			// db.insertFingerprintRecord("location", "", "", "", 0,

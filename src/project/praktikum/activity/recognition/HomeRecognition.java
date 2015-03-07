@@ -46,6 +46,7 @@ public class HomeRecognition extends Activity implements LocationListener {
 	double totalFingerprintRows=0;
 	double matchedFingerprints=0;
 	private DataBase db;
+	boolean wifiStatus = false;
 	double threshold=30;
 	private LocationManager CellTowerlocationManager;
 	private String provider;
@@ -64,6 +65,7 @@ public class HomeRecognition extends Activity implements LocationListener {
 
 		mainText = (TextView) findViewById(R.id.listwifi);
 		mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		wifiStatus = mainWifi.isWifiEnabled();
 		receiverWifi = new WifiReceiver();
 		registerReceiver(receiverWifi, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
@@ -180,6 +182,8 @@ public class HomeRecognition extends Activity implements LocationListener {
 				//false
 			}
 			HomeRecognition.this.setResult(RESULT_OK, intent);
+			if(!wifiStatus)
+				mainWifi.setWifiEnabled(false);
 			finish();//to close the activity
 		}
 	}
