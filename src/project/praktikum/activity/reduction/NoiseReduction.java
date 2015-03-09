@@ -153,9 +153,12 @@ public class NoiseReduction {
 			Log.i(TAG, "Allowed Transition detected. Putting "+ activity + " into buffer.");
 			return true;
 		}
-		if (this.atHome){
+		/*if (this.atHome){
 			return false;
-		}
+		}*/
+		/**
+		 * TODO: Add another if-clause catching illegal states, e.g Sleeping when outdoors or InVehicle when atHome.
+		 */
 		if(isThresholdPassed(activity,now)) {
 			this.state = activity;
 			bufferedActivities.put(now, activity);

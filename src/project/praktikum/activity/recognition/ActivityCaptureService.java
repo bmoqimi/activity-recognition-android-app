@@ -48,7 +48,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	/**
 	 * We have set the earliest possible sleep time to 7pm
 	 */
-	static final int beginSleepCheckHour = 18;
+	static final int beginSleepCheckHour = 16;
 	static final int morningSleepCycleEnd = 8;
 	static final int audioThreshold = 100;
 	static final int lightThreshold = 2;
@@ -119,12 +119,12 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	}
 
 	private void showNotification() {
-		
+
 		NotificationCompat.Builder mBuilder =
-		        new NotificationCompat.Builder(this)
-		        .setSmallIcon(R.drawable.ic_launcher)
-		        .setContentTitle("Current activity")
-		        .setContentText("Nothing yet!!");
+				new NotificationCompat.Builder(this)
+		.setSmallIcon(R.drawable.ic_launcher)
+		.setContentTitle("Current activity")
+		.setContentText("Nothing yet!!");
 		// Creates an explicit intent for an Activity in your app
 		Intent resultIntent = new Intent(this, MainActivity.class);
 
@@ -138,13 +138,13 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
 		PendingIntent resultPendingIntent =
-		        stackBuilder.getPendingIntent(
-		            0,
-		            PendingIntent.FLAG_UPDATE_CURRENT
-		        );
+				stackBuilder.getPendingIntent(
+						0,
+						PendingIntent.FLAG_UPDATE_CURRENT
+						);
 		mBuilder.setContentIntent(resultPendingIntent);
 		nm =
-		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		// mId allows you to update the notification later on.
 		nm.notify(1366, mBuilder.build());
 	}
@@ -156,15 +156,15 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		 *  To get notified whenever the user is present
 		 */
 		userReceiver = new BroadcastReceiver(){
-		    @Override
-		    public void onReceive(Context context, Intent intent) {
-		        if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-		          lastUserAction = new Date();
-		          Log.d(SleepTag, "We got a user present event");
-		           if(isSleep)
-		        	   wakeupSequence(1);
-		        	}
-		        }
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+					lastUserAction = new Date();
+					Log.d(SleepTag, "We got a user present event");
+					if(isSleep)
+						wakeupSequence(1);
+				}
+			}
 		};
 		alarmReceiver = new BroadcastReceiver() {
 			@Override
@@ -175,34 +175,34 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				Log.i(SleepTag,"Called upon here");
 				if (intent.getExtras().containsKey("SleepDetectionWakeUp"))
 					Log.i(SleepTag, "Got called by AlarmService, starting sleep checking cycle" );
-					checkSleeping();
-					}
-			}; 
+				checkSleeping();
+			}
+		}; 
 		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		
+
 		/* Set the alarm to start at 7 PM */
-		
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 21);
-        calendar.set(Calendar.MINUTE, 24);
-        calendar.set(Calendar.SECOND, 0);
-        Intent alint = new Intent(getApplicationContext(), ActivityCaptureService.class);
-        //alint.putExtra("SleepDetectionWakeUp","SleepDetectionWakeUp");
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alint, 0);
-        //alarm.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),1000 * 60, alarmIntent);
-        
-        sensorInProgress = false;
-        lightSensor = new LightSensor(getApplicationContext(), (float)lightThreshold);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(System.currentTimeMillis());
+		calendar.set(Calendar.HOUR_OF_DAY, 21);
+		calendar.set(Calendar.MINUTE, 24);
+		calendar.set(Calendar.SECOND, 0);
+		Intent alint = new Intent(getApplicationContext(), ActivityCaptureService.class);
+		//alint.putExtra("SleepDetectionWakeUp","SleepDetectionWakeUp");
+		PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alint, 0);
+		//alarm.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),1000 * 60, alarmIntent);
+
+		sensorInProgress = false;
+		lightSensor = new LightSensor(getApplicationContext(), (float)lightThreshold);
 		audioSensor = new Recorder(audioThreshold);
-		
+
 		IntentFilter alarmFilter = new IntentFilter();
 		registerReceiver(alarmReceiver, alarmFilter);
-		
+
 		IntentFilter intentFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
 		intentFilter.addAction(Intent.ACTION_USER_PRESENT);
 		registerReceiver(userReceiver , intentFilter);
-		
+
 		int resp = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 
 		if(resp == ConnectionResult.SUCCESS)
@@ -230,14 +230,14 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		checkSleeping();
 		return mStartMode;
 	}
-	
+
 	private void updateNotification(String activity)
 	{
 		NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this)
-		    .setContentTitle("Current activity")
-		    .setContentText(activity)
-		    .setSmallIcon(R.drawable.ic_launcher);
-		
+		.setContentTitle("Current activity")
+		.setContentText(activity)
+		.setSmallIcon(R.drawable.ic_launcher);
+
 		Intent resultIntent = new Intent(this, MainActivity.class);
 
 		// The stack builder object will contain an artificial back stack for the
@@ -250,14 +250,14 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
 		PendingIntent resultPendingIntent =
-		        stackBuilder.getPendingIntent(
-		            0,
-		            PendingIntent.FLAG_UPDATE_CURRENT
-		        );
+				stackBuilder.getPendingIntent(
+						0,
+						PendingIntent.FLAG_UPDATE_CURRENT
+						);
 		mNotifyBuilder.setContentIntent(resultPendingIntent);
-		    nm.notify(
-		            1366,
-		            mNotifyBuilder.build());
+		nm.notify(
+				1366,
+				mNotifyBuilder.build());
 	}
 
 	@SuppressLint("SimpleDateFormat")
@@ -349,23 +349,23 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	public void setSleep(boolean isSleep) {
 		this.isSleep = isSleep;
 	}
-	
+
 	private void scheduleSleepTimer(double minutes){
 		long futureMillis = (long) minutes * 60 * 1000;
 		CountDownTimer cnt = new CountDownTimer(futureMillis, futureMillis ) {
-			
+
 			@Override
 			public void onTick(long millisUntilFinished) {
 				// TODO Auto-generated method stub
 				Log.d(SleepTag, "Timer Ticked with ID " + this.hashCode());
 				//return;
 			}
-			
+
 			@Override
 			public void onFinish() {
 				// TODO Auto-generated method stub
 				if (!isRunning)
-									return;
+					return;
 				Log.d(SleepTag, "Timer with ID : " + this.hashCode() + "time is up.");
 
 				Log.i(SleepTag, "Timer ended, checking sleep conditions now.");
@@ -377,19 +377,19 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		cnt.start();
 
 	}
-	
+
 	private void scheduleSensorTimer(long seconds){
 		long futureMillis =  seconds * 1000;
 		Log.i(SleepTag, "Setting a new count down timer for " + seconds + " seconds ");
 		CountDownTimer cnt = new CountDownTimer(futureMillis, futureMillis ) {
-			
+
 			@Override
 			public void onTick(long millisUntilFinished) {
 				// TODO Auto-generated method stub
 				Log.d(SleepTag, "Timer Ticked with ID " + this.hashCode());
 				return;
 			}
-			
+
 			@Override
 			public void onFinish() {
 				// TODO Auto-generated method stub
@@ -403,7 +403,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 					Log.d(SleepTag, "Timer finished; Light is: " + light + " and sound is : " + sound);
 					if ( light && sound) {
 						Log.d(SleepTag, "Timer finished and sensory input indicates the user is asleep");
-						
+
 						if(!isSleep)
 						{
 							isSleep = true;
@@ -415,7 +415,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 							//scheduleSleepTimer(sleepCheckCycle);
 							return;
 						}
-						
+
 					}
 					else {
 						Log.d(SleepTag, "Light and sensory input indicate the user is NOT sleeping");
@@ -428,32 +428,35 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 					}
 				}
 			}
-			
+
 		};
 		Log.d(SleepTag, "Setting a new sensory timer for " + seconds + " seconds with ID: " + cnt.hashCode());
 		cnt.start();
 	}
 	public void checkSleeping(){
 		Log.d(SleepTag, "CheckSleep started. Will check all sleeping conditions now.");
-		if(!isAtHome) {
-			Log.d(SleepTag, "User is not at home so checking again later.");
-			scheduleSleepTimer(sleepCheckCycle);
-			return; 
-		  }
-		int currentTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-		if(currentTime < beginSleepCheckHour ) {
-			if(currentTime > morningSleepCycleEnd) {
-				Log.d(SleepTag, "CheckSleep started, Time of the day is before sleeping hours");
+		if(!isSleep) {
+			if(!isAtHome) {
+				Log.d(SleepTag, "User is not at home so checking again later.");
+				wakeupSequence(1);
+				//scheduleSleepTimer(sleepCheckCycle);
+				return; 
+			}
+			int currentTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+			if(currentTime < beginSleepCheckHour ) {
+				if(currentTime > morningSleepCycleEnd) {
+					Log.d(SleepTag, "CheckSleep started, Time of the day is before sleeping hours");
+					return;
+				}
+			}
+			Date tempDate = new Date();
+			int minutesSinceLastAction = (int) (((new Date().getTime() - lastUserAction.getTime()) / 1000 ) / 60);
+			if (minutesSinceLastAction < sleepCheckCycle)
+			{
+				Log.d(SleepTag, "CheckSleep started. The user was recently active on device.");
+				//scheduleSleepTimer(sleepCheckCycle);
 				return;
 			}
-		}
-		Date tempDate = new Date();
-		int minutesSinceLastAction = (int) (((new Date().getTime() - lastUserAction.getTime()) / 1000 ) / 60);
-		if (minutesSinceLastAction < sleepCheckCycle)
-		{
-			Log.d(SleepTag, "CheckSleep started. The user was recently active on device.");
-			scheduleSleepTimer(sleepCheckCycle);
-			return;
 		}
 		Log.d(SleepTag, "Now getting sensory input");
 		lightSensor.startListening();
@@ -461,9 +464,9 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		sensorInProgress = true;
 		Log.i(SleepTag, "Other sleeping conditions are met, checking sensory input");
 		scheduleSensorTimer(sensorCycleCheck);
-		
+
 	}
-	
+
 	private void wakeupSequence(int priority) {
 		isSleep = false;
 		Log.i(SleepTag,"wakeup detected with priority " + priority );
