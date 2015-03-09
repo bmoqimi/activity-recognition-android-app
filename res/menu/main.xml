@@ -9,9 +9,14 @@
         android:title="@string/action_settings"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/action_report"
+        android:id="@+id/action_Dreport"
         android:orderInCategory="100"
-        android:title="Get report"
+        android:title="Daily report"
+        app:showAsAction="never"/>
+        <item
+        android:id="@+id/action_Wreport"
+        android:orderInCategory="100"
+        android:title="Weekly report"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_export"

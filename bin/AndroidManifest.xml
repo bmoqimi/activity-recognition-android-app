@@ -17,11 +17,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-        <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-        <uses-feature android:name="android.hardware.sensor.light" android:required="false" />
-        
-    
+    <uses-feature
+        android:name="android.hardware.sensor.light"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -40,7 +40,6 @@
         </service>
 
         <activity
-            
             android:name=".MainActivity"
             android:label="@string/title_activity_wifi"
             android:screenOrientation="portrait" >
@@ -49,14 +48,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter >
-                <action android:name="android.intent.action.USER_PRESENT"/>
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
-            <intent-filter >
-                <action android:name="android.intent.action.SCREEN_ON"/>
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" />
             </intent-filter>
-            <intent-filter >
-                <action android:name="wakeup"/>
+            <intent-filter>
+                <action android:name="wakeup" />
             </intent-filter>
         </activity>
         <activity
@@ -72,18 +71,26 @@
             android:label="@string/title_activity_map" >
         </activity>
         <activity
-            android:name="project.praktikum.activity.recognition.SetHome"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:label="@string/set_home" >
+            android:name=".SetHome"
+            android:label="@string/set_home"
+            android:theme="@android:style/Theme.NoDisplay" >
         </activity>
         <activity
-            android:name="project.praktikum.activity.recognition.HomeRecognition"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:label="@string/home_similarity" >
+            android:name=".HomeRecognition"
+            android:label="@string/home_similarity"
+            android:theme="@android:style/Theme.NoDisplay" >
         </activity>
-          <activity
+        <activity
             android:name="project.praktikum.activity.report.ShowReport"
             android:label="@string/ButtonReport" >
+        </activity>
+        <activity
+            android:name="project.praktikum.activity.report.ShowWReport"
+            android:label="@string/title_activity_show_weekly_report" >
+        </activity>
+        <activity
+            android:name="project.praktikum.activity.report.WeeklyReport"
+            android:label="@string/title_activity_weekly_report" >
         </activity>
     </application>
 

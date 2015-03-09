@@ -1,71 +1,215 @@
 package project.praktikum.activity.report;
 
+import java.util.Calendar;
+
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.ValueDependentColor;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import project.praktikum.activity.recognition.R;
+import project.praktikum.database.DataBase;
+import android.R.string;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public class ShowReport extends Activity{
+public class ShowReport extends Activity {
 
+	private int mYear;
+	private int mMonth;
+	private int mDay;
+	private GraphView graph;
+	private TextView mDateDisplay;
+	private Button mPickDate;
+	private TextView mStepsDisplay;
+	private TextView mCaloriesDisplay;
+
+	public static StringBuilder today;
+	static final int DATE_DIALOG_ID = 0;
+	DataBase db;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_report);
+		db = DataBase.getInstance(getApplicationContext());
+		//db.deteleAllTimeLineRecords();
+		db.fillTimeLine();
+
+		mDateDisplay = (TextView) findViewById(R.id.showDate);
+		mStepsDisplay= (TextView) findViewById(R.id.textViewSteps);
+		mCaloriesDisplay= (TextView) findViewById(R.id.textViewCalories);
+		mPickDate = (Button) findViewById(R.id.datePickerButton);
+
+		// get the current date
+		final Calendar c = Calendar.getInstance();
+		mYear = c.get(Calendar.YEAR);
+		mMonth = c.get(Calendar.MONTH);
+		mDay = c.get(Calendar.DAY_OF_MONTH);
+		StringBuilder today = new StringBuilder()
+		.append(mYear).append("-").append(String.format("%02d", mMonth + 1)).append("-")
+		.append(String.format("%02d",mDay));
 		
-		GraphView graph = (GraphView) findViewById(R.id.graph);
-		BarGraphSeries<DataPoint> series = new BarGraphSeries<DataPoint>(new DataPoint[] {
-		          new DataPoint(1, 124),
-		          new DataPoint(2, 56),
-		          new DataPoint(3, 115),
-		          new DataPoint(4, 913),
-		          new DataPoint(5, 61)
+		this.mDateDisplay.setText(today);
+//		
+//		 Toast.makeText(this, String.valueOf(today.toString()),
+//		 Toast.LENGTH_LONG).show();
+
+		graph = (GraphView) findViewById(R.id.graph);
+		BarGraphSeries<DataPoint> series = new BarGraphSeries<DataPoint>(
+				new DataPoint[] {
+						new DataPoint(1, db.getTimelineWalkingTime(today.toString())),
+						new DataPoint(2, db.getTimelineRunningTime(today.toString())),
+						new DataPoint(3, db.getTimelineSleepingTime(today.toString())),
+						new DataPoint(4, db.getTimelineOnBicycleTime(today.toString())),
+						new DataPoint(5, db.getTimelineInVehicleTime(today.toString())) 
+						});
+		
+		series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
+		    @Override
+		    public int get(DataPoint data) {
+		    return Color.rgb((int) data.getX()*255/4, (int) Math.abs(data.getY()*255/6), 100);
+		    }
 		});
+
+		series.setSpacing(10);
+
+		// draw values on top
+		series.setDrawValuesOnTop(true);
+		series.setValuesOnTopColor(Color.BLACK);
 		graph.addSeries(series);
+//		StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+//		staticLabelsFormatter.setHorizontalLabels(new String[] {"W", "R", "S","B","V"});
 
-		GraphView graph2 = (GraphView) findViewById(R.id.graph2);
-		LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(new DataPoint[] {
-		          new DataPoint(01, 180),
-		          new DataPoint(02, 51),
-		          new DataPoint(03, 30),
-		          new DataPoint(04, 200),
-		          new DataPoint(05, 77),
-		          new DataPoint(7, 56),
-		          new DataPoint(8, 115),
-		          new DataPoint(9, 250),
-		          new DataPoint(10, 61),
-		          new DataPoint(11, 180),
-		          new DataPoint(12, 51),
-		          new DataPoint(13, 30),
-		          new DataPoint(14, 200),
-		          new DataPoint(15, 77),
-		          new DataPoint(17, 56),
-		          new DataPoint(18, 115),
-		          new DataPoint(19, 250),
-		          new DataPoint(20, 61)
-		});
-		graph2.addSeries(series2);
+		// GraphView graph2 = (GraphView) findViewById(R.id.graph2);
+		// LineGraphSeries<DataPoint> series2 = new
+		// LineGraphSeries<DataPoint>(new DataPoint[] {
+		// new DataPoint(1, db.getTimelineWalkingTime()),
+		// new DataPoint(2, db.getTimelineRunningTime()),
+		// new DataPoint(3, db.getTimelineSleepingTime()),
+		// new DataPoint(4, db.getTimelineOnBicycleTime()),
+		// new DataPoint(5, db.getTimelineInVehicleTime())
+		// });
+		// graph2.addSeries(series2);
+
+		// GraphView graph3 = (GraphView) findViewById(R.id.graph3);
+		// PointsGraphSeries<DataPoint> series3 = new
+		// PointsGraphSeries<DataPoint>(new DataPoint[] {
+		// new DataPoint(01, 180),
+		// new DataPoint(02, 51),
+		// new DataPoint(03, 30),
+		// new DataPoint(04, 200),
+		// new DataPoint(05, 77),
+		// new DataPoint(7, 56),
+		// new DataPoint(8, 115),
+		// new DataPoint(9, 250),
+		// new DataPoint(10, 61)
+		// });
+		// graph3.addSeries(series3);
 		
-		GraphView graph3 = (GraphView) findViewById(R.id.graph3);
-		PointsGraphSeries<DataPoint> series3 = new PointsGraphSeries<DataPoint>(new DataPoint[] {
-		          new DataPoint(01, 180),
-		          new DataPoint(02, 51),
-		          new DataPoint(03, 30),
-		          new DataPoint(04, 200),
-		          new DataPoint(05, 77),
-		          new DataPoint(7, 56),
-		          new DataPoint(8, 115),
-		          new DataPoint(9, 250),
-		          new DataPoint(10, 61)
-		});
-		graph3.addSeries(series3);
+		mPickDate.setOnClickListener(new View.OnClickListener() {
+	        public void onClick(View v) {
+	            showDialog(DATE_DIALOG_ID);
+	        }
+	    });
+		
+		int steps = db.getTimelineWalkingTime(today.toString())*100+
+		db.getTimelineRunningTime(today.toString())*180;
+		String remainingSteps;
+		if(steps>=6000)
+			remainingSteps="\nGoal is reached.";
+		else
+			remainingSteps="\n"+String.valueOf(6000-steps)+" steps is remained.";
+			
+		this.mStepsDisplay.setText(new StringBuilder().append("\n\nTotal number of steps are: ")
+				.append(String.valueOf(steps)).append("\nYour goal is: 6000 steps").append(remainingSteps)
+				.append("\n\n"));
+		
+		// 0.045
+		this.mCaloriesDisplay.setText(new StringBuilder().append("Total amount of calories burned is: ")
+				.append(String.valueOf((int)Math.ceil(steps* 0.045))).append("\n"));
 
+	}
+
+	private void updateDisplay() {
+		
+		today = new StringBuilder()
+		.append(mYear).append("-").append(String.format("%02d", mMonth + 1)).append("-")
+		.append(String.format("%02d",mDay));
+		
+		this.mDateDisplay.setText(today);
+		
+		graph.removeAllSeries();
+		BarGraphSeries<DataPoint> series = new BarGraphSeries<DataPoint>(
+				new DataPoint[] {
+						new DataPoint(1, db.getTimelineWalkingTime(today.toString())),
+						new DataPoint(2, db.getTimelineRunningTime(today.toString())),
+						new DataPoint(3, db.getTimelineSleepingTime(today.toString())),
+						new DataPoint(4, db.getTimelineOnBicycleTime(today.toString())),
+						new DataPoint(5, db.getTimelineInVehicleTime(today.toString())) 
+						});
+		series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
+		    @Override
+		    public int get(DataPoint data) {
+		    return Color.rgb((int) data.getX()*255/4, (int) Math.abs(data.getY()*255/6), 100);
+		    }
+		});
+
+		series.setSpacing(10);
+
+		// draw values on top
+		series.setDrawValuesOnTop(true);
+		series.setValuesOnTopColor(Color.BLACK);
+		graph.addSeries(series);
+		
+		int steps = db.getTimelineWalkingTime(today.toString())*100+
+		db.getTimelineRunningTime(today.toString())*180;
+		String remainingSteps;
+		if(steps>=6000)
+			remainingSteps="\nGoal is reached.";
+		else
+			remainingSteps="\n"+String.valueOf(6000-steps)+" steps are remained.";
+			
+		this.mStepsDisplay.setText(new StringBuilder().append("\n\nTotal number of steps are: ")
+				.append(String.valueOf(steps)).append("\nYour goal is: 6000 steps").append(remainingSteps)
+				.append("\n\n"));
+		
+		// 0.045
+		this.mCaloriesDisplay.setText(new StringBuilder().append("Total amount of calories burned is: ")
+				.append(String.valueOf((int)Math.ceil(steps* 0.045))).append(" calories"));
+
+	}
+
+	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			mYear = year;
+			mMonth = monthOfYear;
+			mDay = dayOfMonth;
+			updateDisplay();
+		}
+	};
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case DATE_DIALOG_ID:
+			return new DatePickerDialog(this, mDateSetListener, mYear, mMonth,
+					mDay);
+		}
+		return null;
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {

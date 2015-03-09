@@ -13,6 +13,7 @@ import java.util.Date;
 
 import project.praktikum.activity.recognition.ActivityCaptureService;
 import project.praktikum.activity.report.ShowReport;
+import project.praktikum.activity.report.WeeklyReport;
 import project.praktikum.database.CustomCursorAdapter;
 import project.praktikum.database.DataBase;
 import android.annotation.SuppressLint;
@@ -491,57 +492,66 @@ public class MainActivity extends ActionBarActivity {
 			}
 		}
 	 
-	public void ButtonReport_OnClick() {
-	 Intent intent = new Intent(this, ShowReport.class);
-	 startActivity(intent);
-	 }
-	 
-	 @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
-		 MenuInflater inflater = getMenuInflater();
-		 inflater.inflate(R.menu.main, menu);
-		 return true;
-	}
-	 
-	 @Override
-	 public boolean onOptionsItemSelected(MenuItem item) {
-	     // Handle item selection
-	     switch (item.getItemId()) {
-	         case R.id.action_settings:
-	             Intent intent = new Intent(getApplicationContext(), ActivityExpandableListView.class);
-	             startActivity(intent);
-	             return true;
+		public void ButtonReport_OnClick() {
+			 Intent intent = new Intent(this, ShowReport.class);
+			 startActivity(intent);
+			 }
+			
+			public void ButtonWeeklyReport_OnClick() {
+				 Intent intent = new Intent(this, WeeklyReport.class);
+				 startActivity(intent);
+				 }
+			 
+			 @Override
+			public boolean onCreateOptionsMenu(Menu menu) {
+				// TODO Auto-generated method stub
+				 MenuInflater inflater = getMenuInflater();
+				 inflater.inflate(R.menu.main, menu);
+				 return true;
+			}
+			 
+			 @Override
+			 public boolean onOptionsItemSelected(MenuItem item) {
+			     // Handle item selection
+			     switch (item.getItemId()) {
+			         case R.id.action_settings:
+			             Intent intent = new Intent(getApplicationContext(), ActivityExpandableListView.class);
+			             startActivity(intent);
+			             return true;
 
-	         case R.id.action_report:
-	        	 ButtonReport_OnClick();
-	             return true;
+			         case R.id.action_Dreport:
+			        	 ButtonReport_OnClick();
+			             return true;
+			             
+			         case R.id.action_Wreport:
+			        	 ButtonWeeklyReport_OnClick();
+			             return true;
 
-	         case R.id.action_export:
-	             exportDB();
-	             return true;
+			         case R.id.action_export:
+			             exportDB();
+			             return true;
 
-	         case R.id.action_service:
-	        	 startService();
-	             return true;
+			         case R.id.action_service:
+			        	 startService();
+			             return true;
 
-	         case R.id.action_fingertpring:
-	        	 startFingerprintingService();
-	             return true;
+			         case R.id.action_fingertpring:
+			        	 startFingerprintingService();
+			             return true;
 
-	         case R.id.action_sethome:
-	        	 SetHome_OnClick();
-	             return true;
+			         case R.id.action_sethome:
+			        	 SetHome_OnClick();
+			             return true;
 
-	         case R.id.action_home_similarity:
-	        	 HomeSimilarity_OnClick();
-	             return true;
-	             
-	         default:
-	             return super.onOptionsItemSelected(item);
-	     }
-	 }
-}
+			         case R.id.action_home_similarity:
+			        	 HomeSimilarity_OnClick();
+			             return true;
+			             
+			         default:
+			             return super.onOptionsItemSelected(item);
+			     }
+			 }
+		}
 
 
 

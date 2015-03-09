@@ -14,6 +14,13 @@
     <string name="button_home_Similarity">get home similarity</string>
     <string name="title_activity_gps">GPSActivity</string>
     <string name="title_activity_map">MapActivity</string>
+    <string name="title_weekly_report">Blue= Walking , Red= Running\nGreen=Bicycle , Black=Vehicle</string>
+    <string name="infoDiagram">1=walk, 2=run, 3=sleep, 4=bicycle, 5=vehicle</string>
     <string name="title_activity_set_home">Please wait...\n\nThis action may take few seconds...</string>
+    <string name="title_activity_show_weekly_report">ShowWeeklyReport</string>
+    <string name="title_activity_report_tab">ReportTAbActivity</string>
+    <string name="rep1">Walking and running times during last 7 days:</string>
+    <string name="rep2">\n\nSleep time during last 7 days:</string>
+    <string name="title_activity_weekly_report">WeeklyReport</string>
 
 </resources>

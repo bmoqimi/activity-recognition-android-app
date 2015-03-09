@@ -79,6 +79,21 @@ public class DataBase extends SQLiteOpenHelper
 
 		db.execSQL(createTable);
 		
+		createTable = "create table timelineHistorical"+
+				"( "
+				+ "_id"
+				+ " integer primary key AUTOINCREMENT, "
+				+ "date"
+				+ " text, "
+				+ "start"
+				+ " text, "
+				+ "end"
+				+ " text, "
+				+ "activity"
+				+ " text)";
+
+		db.execSQL(createTable);
+		
 		createTable = "create table fingerprints"+
 				"( "
 				+ "_id"
@@ -189,7 +204,8 @@ public class DataBase extends SQLiteOpenHelper
 		}
 	}
 	
-	private void deteleAllTimeLineRecords()
+	
+	public void deteleAllTimeLineRecords()
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete("timeline", null, null);
@@ -327,6 +343,101 @@ public class DataBase extends SQLiteOpenHelper
 	    long count = statement.simpleQueryForLong();
 	    return Long.toString(count);
 	}
+	
+	public int getTimelineWalkingTime(String date) {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    String sql = "SELECT sum(strftime('%s', end) - strftime('%s',start)) FROM timeline where activity='Walking' and strftime('%s', end) - strftime('%s',start)>0 and start like '%"+date+"%'";
+	    SQLiteStatement statement = db.compileStatement(sql);
+	    //long count = statement.simpleQueryForLong();
+	    //return Long.toString(count);
+	    int result=0;
+	    try{
+	    result = (int)(Integer.parseInt(statement.simpleQueryForString())/60.0);
+	    }
+	    catch(Exception ex) {}
+	    return (result);
+	}
+	
+	public int getTimelineRunningTime(String date) {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    String sql = "SELECT sum(strftime('%s', end) - strftime('%s',start)) FROM timeline where activity='Running' and start like '%"+date+"%'";
+	    SQLiteStatement statement = db.compileStatement(sql);
+	    //long count = statement.simpleQueryForLong();
+	    //return Long.toString(count);
+	    int result=0;
+	    try{
+	    result = (int)(Integer.parseInt(statement.simpleQueryForString())/60.0);
+	    }
+	    catch(Exception ex) {}
+	    return (result);
+	}
+	
+	public int getTimelineSleepingTime(String date) {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    String sql = "SELECT sum(strftime('%s', end) - strftime('%s',start)) FROM timeline where activity='Sleeping' and start like '%"+date+"%'";
+	    SQLiteStatement statement = db.compileStatement(sql);
+	    //long count = statement.simpleQueryForLong();
+	    //return Long.toString(count);
+	    int result=0;
+	    try{
+	    result = (int)(Integer.parseInt(statement.simpleQueryForString())/60.0);
+	    }
+	    catch(Exception ex) {}
+	    return (result);
+	}
+	
+	public int getTimelineInVehicleTime(String date) {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    String sql = "SELECT sum(strftime('%s', end) - strftime('%s',start)) FROM timeline where activity='InVehicle' and start like '%"+date+"%'";
+	    SQLiteStatement statement = db.compileStatement(sql);
+	    //long count = statement.simpleQueryForLong();
+	    //return Long.toString(count);
+	    int result=0;
+	    try{
+	    result = (int)(Integer.parseInt(statement.simpleQueryForString())/60.0);
+	    }
+	    catch(Exception ex) {}
+	    return (result);
+	}
+	
+	public int getTimelineStillTime(String date) {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    String sql = "SELECT sum(strftime('%s', end) - strftime('%s',start)) FROM timeline where activity='Still' and start like '%"+date+"%'";
+	    SQLiteStatement statement = db.compileStatement(sql);
+	    //long count = statement.simpleQueryForLong();
+	    //return Long.toString(count);
+	    int result=0;
+	    try{
+	    result = (int)(Integer.parseInt(statement.simpleQueryForString())/60.0);
+	    }
+	    catch(Exception ex) {}
+	    return (result);
+	}
+	
+	public int getTimelineOnBicycleTime(String date) {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    String sql = "SELECT sum(strftime('%s', end) - strftime('%s',start)) FROM timeline where activity='OnBicycle' and start like '%"+date+"%'";
+	    SQLiteStatement statement = db.compileStatement(sql);
+	    //long count = statement.simpleQueryForLong();
+	    //return Long.toString(count);
+	    int result=0;
+	    try{
+	    result = (int)(Integer.parseInt(statement.simpleQueryForString())/60.0);
+	    }
+	    catch(Exception ex) {}
+	    return (result);
+	}
+	
+	public String getTimelineCount(String date) {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    //String sql = "SELECT count(*) FROM timeline where activity='Walking' and strftime('%Y-%d-%m', 'start')='2015-03-08'";
+		 String sql = "SELECT count(*) FROM timeline where activity='Walking' and trim(substr(start,0,11)) =trim('"+date+"')";
+	    SQLiteStatement statement = db.compileStatement(sql);
+	    return statement.simpleQueryForString();
+	   
+
+	}
+	
 	
 	public Cursor fetchfingerprintshome() {
 		SQLiteDatabase db = this.getWritableDatabase();
