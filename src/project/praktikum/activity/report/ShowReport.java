@@ -125,6 +125,8 @@ public class ShowReport extends Activity {
 	        }
 	    });
 		
+		//https://transportation.stanford.edu/pdf/caloriecalc_bike.pdf
+		int bikingTime= db.getTimelineOnBicycleTime(today.toString());
 		int steps = db.getTimelineWalkingTime(today.toString())*100+
 		db.getTimelineRunningTime(today.toString())*180;
 		String remainingSteps;
@@ -139,7 +141,7 @@ public class ShowReport extends Activity {
 		
 		// 0.045
 		this.mCaloriesDisplay.setText(new StringBuilder().append("Total amount of calories burned is: ")
-				.append(String.valueOf((int)Math.ceil(steps* 0.045))).append("\n"));
+				.append(String.valueOf((int)Math.ceil(steps* 0.045)+(bikingTime*10))).append("\n"));
 
 	}
 
@@ -174,6 +176,8 @@ public class ShowReport extends Activity {
 		series.setValuesOnTopColor(Color.BLACK);
 		graph.addSeries(series);
 		
+		//https://transportation.stanford.edu/pdf/caloriecalc_bike.pdf
+		int bikingTime= db.getTimelineOnBicycleTime(today.toString());
 		int steps = db.getTimelineWalkingTime(today.toString())*100+
 		db.getTimelineRunningTime(today.toString())*180;
 		String remainingSteps;
@@ -187,8 +191,8 @@ public class ShowReport extends Activity {
 				.append("\n\n"));
 		
 		// 0.045
-		this.mCaloriesDisplay.setText(new StringBuilder().append("Total amount of calories burned is: ")
-				.append(String.valueOf((int)Math.ceil(steps* 0.045))).append(" calories"));
+		this.mCaloriesDisplay.setText(new StringBuilder().append("Total amount of calories burned(via walk,run and bike): ")
+				.append(String.valueOf((int)Math.ceil(steps* 0.045)+(bikingTime*10))).append("\n"));
 
 	}
 
