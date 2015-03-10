@@ -49,10 +49,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	 * We have set the earliest possible sleep time to 7pm
 	 */
 	static final int beginSleepCheckHour = 16;
-	static final int morningSleepCycleEnd = 8;
+	static final int morningSleepCycleEnd = 9;
 	static final int audioThreshold = 100;
 	static final int lightThreshold = 2;
-	static final double sleepCheckCycle = 20; /** In minutes */
+	static final double sleepCheckCycle = 10; /** In minutes */
 	static final long sensorCycleCheck = 15; /** In seconds */
 	private Date sleepingSince;
 	private boolean isSleep = false;
@@ -166,32 +166,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				}
 			}
 		};
-		alarmReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) { 
-				/**
-				 * after we got notified when it is 7pm
-				 */
-				Log.i(SleepTag,"Called upon here");
-				if (intent.getExtras().containsKey("SleepDetectionWakeUp"))
-					Log.i(SleepTag, "Got called by AlarmService, starting sleep checking cycle" );
-				checkSleeping();
-			}
-		}; 
-		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-		/* Set the alarm to start at 7 PM */
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(System.currentTimeMillis());
-		calendar.set(Calendar.HOUR_OF_DAY, 21);
-		calendar.set(Calendar.MINUTE, 24);
-		calendar.set(Calendar.SECOND, 0);
-		Intent alint = new Intent(getApplicationContext(), ActivityCaptureService.class);
-		//alint.putExtra("SleepDetectionWakeUp","SleepDetectionWakeUp");
-		PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alint, 0);
-		//alarm.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),1000 * 60, alarmIntent);
-
+		
 		sensorInProgress = false;
 		lightSensor = new LightSensor(getApplicationContext(), (float)lightThreshold);
 		audioSensor = new Recorder(audioThreshold);
@@ -227,6 +202,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		filter.addAction("project.praktikum.recognition.ACTIVITY_RECOGNITION_DATA");
 		registerReceiver(activityReceiver, filter);
 		lastUserAction = new Date();
+		scheduleSleepTimer(sleepCheckCycle);
 		checkSleeping();
 		return mStartMode;
 	}
