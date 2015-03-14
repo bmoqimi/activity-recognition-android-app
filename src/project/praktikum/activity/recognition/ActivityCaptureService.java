@@ -48,11 +48,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	/**
 	 * We have set the earliest possible sleep time to 7pm
 	 */
-	static final int beginSleepCheckHour = 16;
+	static final int beginSleepCheckHour = 14;
 	static final int morningSleepCycleEnd = 9;
 	static final int audioThreshold = 100;
 	static final int lightThreshold = 2;
-	static final double sleepCheckCycle = 10; /** In minutes */
+	static final double sleepCheckCycle = 2; /** In minutes */
 	static final long sensorCycleCheck = 15; /** In seconds */
 	private Date sleepingSince;
 	private boolean isSleep = false;
