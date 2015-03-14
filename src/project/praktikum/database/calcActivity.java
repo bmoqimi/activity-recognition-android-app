@@ -38,8 +38,7 @@ public class calcActivity {
 	{
 		for(int i = 0 ; i < res.size() - 1 ; i++)
 		{
-			if(res.get(i).getAct().equals(res.get(i + 1).getAct())
-					&& compareDates(res.get(i).getFinish(), res.get(i + 1).getFinish()))
+			if(checkSameActivity(res.get(i).getAct(), res.get(i + 1).getAct()))
 			{
 				res.get(i).setFinish(res.get(i + 1).getFinish());
 				res.remove(i + 1);
@@ -48,9 +47,19 @@ public class calcActivity {
 		}
 	}
 	
+	private boolean checkSameActivity(String s1, String s2)
+	{
+		if(s1.equals("Wakeup"))
+			s1 = "Sleeping";
+		if(s2.equals("Wakeup"))
+			s2 = "Sleeping";
+		if(s1.equals(s2))
+			return true;
+		return false;
+	}
+	
 	private void removeShortActivity()
 	{
-		int cnt = res.size();
 		for(int i = 0 ; i < res.size() ; i++)
 		{
 			if(compareDates(res.get(i).getStart(), res.get(i).getFinish()))

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.security.acl.LastOwnerException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
@@ -54,6 +56,8 @@ public class MainActivity extends ActionBarActivity {
 	CustomCursorAdapter dbAdapter;
 	View hvw;
 	ImageView imgCurrentActivity;
+	TextView txtLastConfirmedActivity;
+	
 
 	boolean isServiceRunning;
 	boolean isFingerprintingServiceRunning;
@@ -157,7 +161,7 @@ public class MainActivity extends ActionBarActivity {
         //ImageView img = (ImageView) hvw.findViewById(R.id.img_header); // get textview object
 
         imgCurrentActivity = (ImageView) hvw.findViewById(R.id.img_header);
-		
+		txtLastConfirmedActivity = (TextView) hvw.findViewById(R.id.txtCurrentActivity);
 		db.fillTimeLine();
         
         loadHosts(prepareListData()); 
@@ -306,6 +310,7 @@ public class MainActivity extends ActionBarActivity {
 		} else {
 			imgCurrentActivity.setImageResource(R.drawable.sleeping);
 		}
+		txtLastConfirmedActivity.setText(avtivity);
 	}
 
 	private boolean isMyServiceRunning(Class<?> serviceClass) {
