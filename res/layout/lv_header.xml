@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:layout_gravity="center"
     android:gravity="center"
     android:orientation="vertical"
-    android:id="@+id/ll_header" >
+    android:id="@+id/ll_header"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
 
-    <ImageView
-        android:id="@+id/img_header"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/standing" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/txtCurrentActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Last confirmed activity : \n"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <ImageView
+            android:id="@+id/img_header"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/standing" />
+
+    </LinearLayout>
 
 </TableRow>
