@@ -93,8 +93,8 @@ public class NoiseReduction {
 	
 	public NoiseReduction(boolean atHome) {
 		this.atHome = atHome;
-		state = "Still";
-		this.activityTimer = new Date();
+		//state = "Still";
+		//this.activityTimer = new Date();
 	}
 	
 	public HashMap<Date,String> getActivities () {

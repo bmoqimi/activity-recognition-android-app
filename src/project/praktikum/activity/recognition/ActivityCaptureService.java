@@ -77,6 +77,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private LightSensor lightSensor;
 	private Recorder audioSensor;
 	private boolean sensorInProgress = false;
+	private HomeDetection homeDetection;
 
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
@@ -128,10 +129,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		// Creates an explicit intent for an Activity in your app
 		Intent resultIntent = new Intent(this, MainActivity.class);
 
-		// The stack builder object will contain an artificial back stack for the
-		// started Activity.
-		// This ensures that navigating backward from the Activity leads out of
-		// your application to the Home screen.
+		/** The stack builder object will contain an artificial back stack for the
+		 started Activity.
+		 This ensures that navigating backward from the Activity leads out of
+		 your application to the Home screen.
+		*/
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 		// Adds the back stack for the Intent (but not the Intent itself)
 		stackBuilder.addParentStack(MainActivity.class);
@@ -202,6 +204,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		filter.addAction("project.praktikum.recognition.ACTIVITY_RECOGNITION_DATA");
 		registerReceiver(activityReceiver, filter);
 		lastUserAction = new Date();
+		homeDetection = new HomeDetection(getApplicationContext());
+		if(!homeDetection.startScan()) {
+			Log.i(TAG, "Wifi scanning failed for home detection");
+		}
 		scheduleSleepTimer(sleepCheckCycle);
 		checkSleeping();
 		return mStartMode;
@@ -216,10 +222,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 
 		Intent resultIntent = new Intent(this, MainActivity.class);
 
-		// The stack builder object will contain an artificial back stack for the
-		// started Activity.
-		// This ensures that navigating backward from the Activity leads out of
-		// your application to the Home screen.
+		/** The stack builder object will contain an artificial back stack for the
+		 started Activity.
+		 This ensures that navigating backward from the Activity leads out of
+		 your application to the Home screen.
+		*/
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 		// Adds the back stack for the Intent (but not the Intent itself)
 		stackBuilder.addParentStack(MainActivity.class);
@@ -275,9 +282,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		}
 		unregisterReceiver(activityReceiver);
 		unregisterReceiver(userReceiver);
-		unregisterReceiver(alarmReceiver);
+		//unregisterReceiver(alarmReceiver);
 		cancelNotification(R.string.app_name);
 		isRunning = false;
+		homeDetection.destroy();
 	}
 
 	public static void cancelNotification(int notifyId) {
@@ -376,6 +384,20 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 					boolean light = lightSensor.stopListening();
 					boolean sound = audioSensor.stopRecording();
 					sensorInProgress = false;
+					isAtHome = homeDetection.isAtHome();
+					noiseReduction.setAtHome(isAtHome);
+					if (!isAtHome) {
+						if (isSleep) {
+							wakeupSequence(1);
+							return;
+						}
+						else {
+							return;
+						}
+					}
+					else {
+						isAtHome = true;
+					}
 					Log.d(SleepTag, "Timer finished; Light is: " + light + " and sound is : " + sound);
 					if ( light && sound) {
 						Log.d(SleepTag, "Timer finished and sensory input indicates the user is asleep");
@@ -388,10 +410,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 							SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 							Log.i(SleepTag, "First Sleeping event detected. Putting it in the database");
 							db.insertRecord("Sleeping", 0, df.format(sleepingSince));
-							//scheduleSleepTimer(sleepCheckCycle);
 							return;
 						}
-
 					}
 					else {
 						Log.d(SleepTag, "Light and sensory input indicate the user is NOT sleeping");
@@ -400,7 +420,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 							wakeupSequence(0);
 							return;
 						}
-						//scheduleSleepTimer(sleepCheckCycle);
 					}
 				}
 			}
@@ -410,12 +429,19 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		cnt.start();
 	}
 	public void checkSleeping(){
+		if(homeDetection.isAtHome()){
+			isAtHome = true;
+			noiseReduction.setAtHome(true);
+		}
+		else { 
+			isAtHome = false;
+			noiseReduction.setAtHome(false);
+		}
 		Log.d(SleepTag, "CheckSleep started. Will check all sleeping conditions now.");
 		if(!isSleep) {
 			if(!isAtHome) {
 				Log.d(SleepTag, "User is not at home so checking again later.");
 				wakeupSequence(1);
-				//scheduleSleepTimer(sleepCheckCycle);
 				return; 
 			}
 			int currentTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
@@ -430,11 +456,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			if (minutesSinceLastAction < sleepCheckCycle)
 			{
 				Log.d(SleepTag, "CheckSleep started. The user was recently active on device.");
-				//scheduleSleepTimer(sleepCheckCycle);
 				return;
 			}
 		}
 		Log.d(SleepTag, "Now getting sensory input");
+		homeDetection.startScan();
 		lightSensor.startListening();
 		audioSensor.startRecording();
 		sensorInProgress = true;
@@ -451,6 +477,5 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		db.insertRecord("Wakeup", 0, df.format(wakeupDate));
 		noiseReduction.setState("Still");
 		lastUserAction = wakeupDate;
-		//scheduleSleepTimer(sleepCheckCycle);
 	}
 }
