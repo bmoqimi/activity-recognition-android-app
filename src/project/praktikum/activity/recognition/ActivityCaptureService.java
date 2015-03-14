@@ -50,7 +50,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	 */
 	static final int beginSleepCheckHour = 14;
 	static final int morningSleepCycleEnd = 9;
-	static final int audioThreshold = 100;
+	static final int audioThreshold = 20;
 	static final int lightThreshold = 2;
 	static final double sleepCheckCycle = 2; /** In minutes */
 	static final long sensorCycleCheck = 15; /** In seconds */
@@ -116,6 +116,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	public void onCreate() {  
 		db = DataBase.getInstance(getApplicationContext());
 		isRunning = true;
+		isSleep = false;
 		showNotification();
 	}
 
@@ -154,6 +155,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	/** The service is starting, due to a call to startService() */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		
 		/** 
 		 *  To get notified whenever the user is present
 		 */
@@ -163,12 +165,13 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
 					lastUserAction = new Date();
 					Log.d(SleepTag, "We got a user present event");
-					if(isSleep)
+					if(isSleep) {
+						Log.i(SleepTag, "User Action event received; waking the user up");
 						wakeupSequence(1);
-				}
+					}
+					}
 			}
 		};
-		
 		sensorInProgress = false;
 		lightSensor = new LightSensor(getApplicationContext(), (float)lightThreshold);
 		audioSensor = new Recorder(audioThreshold);
@@ -252,7 +255,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		if(isSleep) {
 			if(activity == "Still")
 				return;
-			else 
+			else
+				Log.i(SleepTag, "An Activity detected while the user is sleeping;waking him up");
 				wakeupSequence(1);
 		}
 		if (noiseReduction.newActivityDetected(activity)){
@@ -388,6 +392,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 					noiseReduction.setAtHome(isAtHome);
 					if (!isAtHome) {
 						if (isSleep) {
+							Log.i(SleepTag, "User is not at home yet still sleeping;waking him up");
 							wakeupSequence(1);
 							return;
 						}
@@ -436,12 +441,15 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		else { 
 			isAtHome = false;
 			noiseReduction.setAtHome(false);
+			if(isSleep) {
+				Log.i(SleepTag, "User is not home so waking him up");
+				wakeupSequence(1);
+			}
 		}
 		Log.d(SleepTag, "CheckSleep started. Will check all sleeping conditions now.");
 		if(!isSleep) {
 			if(!isAtHome) {
 				Log.d(SleepTag, "User is not at home so checking again later.");
-				wakeupSequence(1);
 				return; 
 			}
 			int currentTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);

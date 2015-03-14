@@ -93,7 +93,7 @@ public class NoiseReduction {
 	
 	public NoiseReduction(boolean atHome) {
 		this.atHome = atHome;
-		//state = "Still";
+		state = "Still";
 		//this.activityTimer = new Date();
 	}
 	

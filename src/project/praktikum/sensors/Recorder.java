@@ -27,7 +27,7 @@ public class Recorder
 	private int bufferSize = 0;
 	private Thread recordingThread = null;
 	private boolean isRecording = false;
-	private int threshold = 1000;
+	private int threshold = 100;
 	private int sumLoud = 0;
 	private int maxLoud;
 	private String SleepTag = "SleepDetection";
