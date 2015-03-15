@@ -117,6 +117,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		db = DataBase.getInstance(getApplicationContext());
 		isRunning = true;
 		isSleep = false;
+		//db.insertRecord("StartService", 100, df.format(item.getKey()));
 		showNotification();
 	}
 
