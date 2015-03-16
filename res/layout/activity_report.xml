@@ -22,7 +22,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal" >
-
+                <TextView
+                    android:id="@+id/TextDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" 
+                    android:text="Date: "/>
                 <TextView
                     android:id="@+id/showDate"
                     android:layout_width="wrap_content"
@@ -37,7 +41,12 @@
                     android:textSize="10dp"
                      />
             </LinearLayout>
-
+                <TextView
+                    android:id="@+id/TextYAxis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" 
+                    android:textColor="@color/primary_dark_material_dark"
+                    android:text="\n    Min"/>
             <com.jjoe64.graphview.GraphView
                 android:id="@+id/graph"
                 android:layout_width="match_parent"
