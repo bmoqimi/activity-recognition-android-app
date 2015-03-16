@@ -162,10 +162,15 @@ public class MainActivity extends ActionBarActivity {
 
         imgCurrentActivity = (ImageView) hvw.findViewById(R.id.img_header);
 		txtLastConfirmedActivity = (TextView) hvw.findViewById(R.id.txtCurrentActivity);
-		db.fillTimeLine();
+		try {
+			db.fillTimeLine();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
-        loadHosts(prepareListData()); 
         xLv.addHeaderView(hvw); // add header view
+        loadHosts(prepareListData()); 
 
 		isFingerprintingServiceRunning = isMyServiceRunning(FingerprintingService.class);
 		//btnFingerprinting = (Button) findViewById(R.id.ButtonFingerprintingService);

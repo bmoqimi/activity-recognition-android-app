@@ -38,6 +38,7 @@ public class calcActivity {
 	{
 		for(int i = 0 ; i < res.size() - 1 ; i++)
 		{
+			if(checkSameActivity(res.get(i).getAct(), res.get(i + 1).getAct()))
 			do
 			{
 				res.get(i).setFinish(res.get(i + 1).getStart());

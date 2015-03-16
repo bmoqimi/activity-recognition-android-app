@@ -46,7 +46,12 @@ public class ShowReport extends Activity {
 		setContentView(R.layout.activity_report);
 		db = DataBase.getInstance(getApplicationContext());
 		//db.deteleAllTimeLineRecords();
-		db.fillTimeLine();
+		try {
+			db.fillTimeLine();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		mDateDisplay = (TextView) findViewById(R.id.showDate);
 		mStepsDisplay= (TextView) findViewById(R.id.textViewSteps);

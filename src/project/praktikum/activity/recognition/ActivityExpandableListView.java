@@ -25,7 +25,12 @@ public class ActivityExpandableListView extends ExpandableListActivity {
  
         db = DataBase.getInstance(getApplicationContext());
         
-        db.fillTimeLine();
+        try {
+			db.fillTimeLine();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         loadHosts(prepareListData());
     }

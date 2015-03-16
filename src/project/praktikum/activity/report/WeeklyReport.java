@@ -38,7 +38,12 @@ public class WeeklyReport extends Activity {
 		
 		db = DataBase.getInstance(getApplicationContext());
 		//db.deteleAllTimeLineRecords();
-		db.fillTimeLine();
+		try {
+			db.fillTimeLine();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// get the current date
 		final Calendar c = Calendar.getInstance();

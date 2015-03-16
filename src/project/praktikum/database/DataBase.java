@@ -2,6 +2,7 @@ package project.praktikum.database;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.content.ContentValues;
@@ -152,55 +153,67 @@ public class DataBase extends SQLiteOpenHelper
 		onCreate(db);
 	}
 	
-	private boolean compareDates(String fi , String sec) throws ParseException
+	private Activity getTimeLineLastRecord(Cursor c)
 	{
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		Date dFi = new Date(),dSec = new Date();
-		dFi = df.parse(fi);
-		dSec = df.parse(sec);
-		long diff = Math.abs(dFi.getTime() - dSec.getTime());
-		return false;
+		Activity act = null;
+		String activity = "";
+		String start = "";
+		String end = "";
+		if(c.getCount() > 0)
+		{
+			c.moveToFirst();
+			activity = c.getString(c.getColumnIndex("activity"));
+			start = c.getString(c.getColumnIndex("start"));
+			end = c.getString(c.getColumnIndex("end"));
+			act = new Activity(activity, start, end);
+		}
+		return act;
 	}
 	
-	public void fillTimeLine()
+	public void fillTimeLine() throws Exception
 	{
 		
+		deteleAllTimeLineRecords();
 		Cursor cr = getAllRecords(getLastDate());
 		Cursor ct = fetchLasTimeLineRecord();
-		//deteleAllTimeLineRecords();
 		if(cr.moveToFirst())
 		{
-			String activity = "";
-			String start = "";
-			String end = "";
-			while(cr.isAfterLast() == false)
+			calcActivity calc = new calcActivity();
+			
+			ArrayList<Activity> activities = calc.Calc(cr, getTimeLineLastRecord(ct));
+			for(int i = 0 ; i < activities.size() ; i++)
 			{
-				String tmp = cr.getString(cr.getColumnIndex(COLUMN_ACTIVITY));
-				//if(ct.moveToFirst())
-				//{
-					//if(ct.getString(ct.getColumnIndex("activity")).equals(tmp)
-					//		&& compareDates(ct.getString(ct.getColumnIndex("start")),cr.getString(cr.getColumnIndex(COLUMN_DATE)) ))
-				//	{
-				//		activity = tmp;
-				//		start = ct.getString(ct.getColumnIndex("start"));
-				//		deteleTimeLineRecord(ct.getInt(ct.getColumnIndex("_id")));
-				//	}
-				//}
-				if(!tmp.equals(activity))
-				{
-					if(!activity.equals(""))
-					{
-						//if(!activity.equals("Still"))
-							insertTimeLine(activity, start, end);
-					}
-					activity = tmp;
-					start = cr.getString(cr.getColumnIndex(COLUMN_DATE));
-				}
-				end = cr.getString(cr.getColumnIndex(COLUMN_DATE));
-				cr.moveToNext();
+				insertTimeLine(activities.get(i).getAct(),
+						convertDateToString(activities.get(i).getStart()),
+						convertDateToString(activities.get(i).getFinish()));
 			}
+//			while(cr.isAfterLast() == false)
+//			{
+//				String tmp = cr.getString(cr.getColumnIndex(COLUMN_ACTIVITY));
+//				//if(ct.moveToFirst())
+//				//{
+//					//if(ct.getString(ct.getColumnIndex("activity")).equals(tmp)
+//					//		&& compareDates(ct.getString(ct.getColumnIndex("start")),cr.getString(cr.getColumnIndex(COLUMN_DATE)) ))
+//				//	{
+//				//		activity = tmp;
+//				//		start = ct.getString(ct.getColumnIndex("start"));
+//				//		deteleTimeLineRecord(ct.getInt(ct.getColumnIndex("_id")));
+//				//	}
+//				//}
+//				if(!tmp.equals(activity))
+//				{
+//					if(!activity.equals(""))
+//					{
+//						//if(!activity.equals("Still"))
+//							insertTimeLine(activity, start, end);
+//					}
+//					activity = tmp;
+//					start = cr.getString(cr.getColumnIndex(COLUMN_DATE));
+//				}
+//				end = cr.getString(cr.getColumnIndex(COLUMN_DATE));
+//				cr.moveToNext();
+//			}
 			//if(!activity.equals("Still"))
-				insertTimeLine(activity, start, end);
 		}
 	}
 	
@@ -215,6 +228,13 @@ public class DataBase extends SQLiteOpenHelper
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete("timeline", "_id=" + id, null);
+	}
+	
+	private String convertDateToString(Date input) throws ParseException
+	{
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		String date = df.format(input);
+		return date;
 	}
 	
 	private void insertTimeLine(String activity , String start , String end)
