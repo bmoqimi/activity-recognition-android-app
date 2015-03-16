@@ -20,6 +20,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +38,7 @@ public class ShowReport extends Activity {
 	private Button mPickDate;
 	private TextView mStepsDisplay;
 	private TextView mCaloriesDisplay;
+	private String  TAG = "ReportGeneration";
 
 	public static StringBuilder today;
 	static final int DATE_DIALOG_ID = 0;
@@ -48,7 +50,13 @@ public class ShowReport extends Activity {
 		setContentView(R.layout.activity_report);
 		db = DataBase.getInstance(getApplicationContext());
 		//db.deteleAllTimeLineRecords();
-		db.fillTimeLine();
+		try {
+			db.fillTimeLine();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			Log.e(TAG, "database error occured");
+			e.printStackTrace();
+		}
 
 		mDateDisplay = (TextView) findViewById(R.id.showDate);
 		mStepsDisplay= (TextView) findViewById(R.id.textViewSteps);

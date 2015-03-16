@@ -6,6 +6,7 @@ import project.praktikum.activity.recognition.R.layout;
 import project.praktikum.activity.recognition.R.menu;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -30,6 +31,7 @@ public class WeeklyReport extends Activity {
 	private int mMonth;
 	private int mDay;
 	private GraphView graph;
+	private String  TAG = "ReportGeneration";
 
 	public static StringBuilder today;
 	static final int DATE_DIALOG_ID = 0;
@@ -42,7 +44,13 @@ public class WeeklyReport extends Activity {
 		
 		db = DataBase.getInstance(getApplicationContext());
 		//db.deteleAllTimeLineRecords();
-		db.fillTimeLine();
+		try {
+			db.fillTimeLine();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			Log.e(TAG, "database error occured");
+			e.printStackTrace();
+		}
 
 		// get the current date
 		final Calendar c = Calendar.getInstance();

@@ -141,6 +141,7 @@ public class NoiseReduction {
 				Log.i(TAG, "Illegal activity detected; Droping it and moving forward");
 				return false;
 			}
+		}
 		if (state.equals(activity)){
 			bufferedActivities.clear();
 			bufferedActivities.put( now, activity);
@@ -155,7 +156,6 @@ public class NoiseReduction {
 			this.activityTimer = new Date();
 			Log.i(TAG, "Allowed Transition detected. Putting "+ activity + " into buffer.");
 			return true;
-		}
 		}
 		if(isThresholdPassed(activity,now)) {
 			this.state = activity;
