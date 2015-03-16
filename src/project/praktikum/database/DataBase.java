@@ -392,18 +392,20 @@ public class DataBase extends SQLiteOpenHelper
 	    return (result);
 	}
 	
-	public int getTimelineSleepingTime(String date) {
+	public double getTimelineSleepingTime(String date) {
 		SQLiteDatabase db = this.getWritableDatabase();
 	    String sql = "SELECT sum(strftime('%s', end) - strftime('%s',start)) FROM timeline where activity='Sleeping' and start like '%"+date+"%'";
 	    SQLiteStatement statement = db.compileStatement(sql);
 	    //long count = statement.simpleQueryForLong();
 	    //return Long.toString(count);
-	    int result=0;
+	    double result=0;
 	    try{
-	    result = (int)(Integer.parseInt(statement.simpleQueryForString())/60.0);
+	    result = (int)(Integer.parseInt(statement.simpleQueryForString()));
 	    }
-	    catch(Exception ex) {}
-	    return (result);
+	    catch(Exception ex) {
+	    	return 0d;
+	    }
+	    return (Math.round(result/3600d));
 	}
 	
 	public int getTimelineInVehicleTime(String date) {

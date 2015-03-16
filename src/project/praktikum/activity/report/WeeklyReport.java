@@ -9,11 +9,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.ValueDependentColor;
+import com.jjoe64.graphview.Viewport.AxisBoundsStatus;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -38,12 +42,7 @@ public class WeeklyReport extends Activity {
 		
 		db = DataBase.getInstance(getApplicationContext());
 		//db.deteleAllTimeLineRecords();
-		try {
-			db.fillTimeLine();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		db.fillTimeLine();
 
 		// get the current date
 		final Calendar c = Calendar.getInstance();
@@ -103,9 +102,9 @@ public class WeeklyReport extends Activity {
 				new DataPoint(0, db.getTimelineRunningTime(today.toString())),
 				new DataPoint(1, db.getTimelineRunningTime(day2)),
 				new DataPoint(2, db.getTimelineRunningTime(day3)),
-				new DataPoint(3, db.getTimelineRunningTime(day4) + 10),
+				new DataPoint(3, db.getTimelineRunningTime(day4)),
 				new DataPoint(4, db.getTimelineRunningTime(day5)),
-				new DataPoint(5, db.getTimelineRunningTime(day6)+6),
+				new DataPoint(5, db.getTimelineRunningTime(day6)),
 				new DataPoint(6, db.getTimelineRunningTime(day7)) });
 
 		series.setTitle("R");
@@ -134,7 +133,7 @@ public class WeeklyReport extends Activity {
 		series = new LineGraphSeries<DataPoint>(new DataPoint[] {
 				new DataPoint(0, db.getTimelineInVehicleTime(today.toString())),
 				new DataPoint(1, db.getTimelineInVehicleTime(day2)),
-				new DataPoint(2, db.getTimelineInVehicleTime(day3)+27),
+				new DataPoint(2, db.getTimelineInVehicleTime(day3)),
 				new DataPoint(3, db.getTimelineInVehicleTime(day4)),
 				new DataPoint(4, db.getTimelineInVehicleTime(day5)),
 				new DataPoint(5, db.getTimelineInVehicleTime(day6)),
@@ -145,6 +144,21 @@ public class WeeklyReport extends Activity {
 		series.setDrawDataPoints(true);
 		series.setDataPointsRadius(2);
 		series.setThickness(1);
+		
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMinimumFractionDigits(1);
+
+		StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+		staticLabelsFormatter.setHorizontalLabels(new String[] {today.toString().substring(today.toString().length()-2),
+				day2.substring(day2.length()-2),
+				day3.substring(day3.length()-2),
+				day4.substring(day4.length()-2),
+				day5.substring(day5.length()-2),
+				day6.substring(day6.length()-2),
+				day7.substring(day7.length()-2)});
+		staticLabelsFormatter.setDynamicLabelFormatter(new DefaultLabelFormatter(nf, nf));
+		graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+		graph.getGridLabelRenderer().setNumHorizontalLabels(7); 
 		graph.addSeries(series);
 
 		GraphView graph2 = (GraphView) findViewById(R.id.graph2);
@@ -152,9 +166,9 @@ public class WeeklyReport extends Activity {
 				new DataPoint[] {
 						new DataPoint(0, db.getTimelineSleepingTime(today
 								.toString())),
-						new DataPoint(1, db.getTimelineSleepingTime(day2) + 323),
-						new DataPoint(2, db.getTimelineSleepingTime(day3) + 456),
-						new DataPoint(3, db.getTimelineSleepingTime(day4) + 383),
+						new DataPoint(1, db.getTimelineSleepingTime(day2)),
+						new DataPoint(2, db.getTimelineSleepingTime(day3)),
+						new DataPoint(3, db.getTimelineSleepingTime(day4)),
 						new DataPoint(4, db.getTimelineSleepingTime(day5)),
 						new DataPoint(5, db.getTimelineSleepingTime(day6)),
 						new DataPoint(6, db.getTimelineSleepingTime(day7)) });
@@ -174,6 +188,20 @@ public class WeeklyReport extends Activity {
 		series2.setValuesOnTopColor(Color.BLACK);
 
 		try {
+			NumberFormat nf2 = NumberFormat.getInstance();
+			nf2.setMinimumFractionDigits(1);
+
+			StaticLabelsFormatter staticLabelsFormatter2 = new StaticLabelsFormatter(graph2);
+			staticLabelsFormatter2.setHorizontalLabels(new String[] {today.toString().substring(today.toString().length()-2),
+					day2.substring(day2.length()-2),
+					day3.substring(day3.length()-2),
+					day4.substring(day4.length()-2),
+					day5.substring(day5.length()-2),
+					day6.substring(day6.length()-2),
+					day7.substring(day7.length()-2)});
+			staticLabelsFormatter2.setDynamicLabelFormatter(new DefaultLabelFormatter(nf2, nf2));
+			graph2.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter2);
+			graph2.getGridLabelRenderer().setNumHorizontalLabels(7); 
 			graph2.addSeries(series2);
 		} catch (Exception ex) {
 

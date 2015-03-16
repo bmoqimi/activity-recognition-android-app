@@ -1,7 +1,9 @@
 package project.praktikum.activity.report;
 
+import java.text.NumberFormat;
 import java.util.Calendar;
 
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.ValueDependentColor;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
@@ -46,12 +48,7 @@ public class ShowReport extends Activity {
 		setContentView(R.layout.activity_report);
 		db = DataBase.getInstance(getApplicationContext());
 		//db.deteleAllTimeLineRecords();
-		try {
-			db.fillTimeLine();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		db.fillTimeLine();
 
 		mDateDisplay = (TextView) findViewById(R.id.showDate);
 		mStepsDisplay= (TextView) findViewById(R.id.textViewSteps);
@@ -94,36 +91,16 @@ public class ShowReport extends Activity {
 		// draw values on top
 		series.setDrawValuesOnTop(true);
 		series.setValuesOnTopColor(Color.BLACK);
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMinimumFractionDigits(1);
+
+		StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+		staticLabelsFormatter.setHorizontalLabels(new String[] {"W","R","S","B","V"});
+		staticLabelsFormatter.setDynamicLabelFormatter(new DefaultLabelFormatter(nf, nf));
+		graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+		graph.getGridLabelRenderer().setNumHorizontalLabels(5); 
 		graph.addSeries(series);
-//		StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-//		staticLabelsFormatter.setHorizontalLabels(new String[] {"W", "R", "S","B","V"});
 
-		// GraphView graph2 = (GraphView) findViewById(R.id.graph2);
-		// LineGraphSeries<DataPoint> series2 = new
-		// LineGraphSeries<DataPoint>(new DataPoint[] {
-		// new DataPoint(1, db.getTimelineWalkingTime()),
-		// new DataPoint(2, db.getTimelineRunningTime()),
-		// new DataPoint(3, db.getTimelineSleepingTime()),
-		// new DataPoint(4, db.getTimelineOnBicycleTime()),
-		// new DataPoint(5, db.getTimelineInVehicleTime())
-		// });
-		// graph2.addSeries(series2);
-
-		// GraphView graph3 = (GraphView) findViewById(R.id.graph3);
-		// PointsGraphSeries<DataPoint> series3 = new
-		// PointsGraphSeries<DataPoint>(new DataPoint[] {
-		// new DataPoint(01, 180),
-		// new DataPoint(02, 51),
-		// new DataPoint(03, 30),
-		// new DataPoint(04, 200),
-		// new DataPoint(05, 77),
-		// new DataPoint(7, 56),
-		// new DataPoint(8, 115),
-		// new DataPoint(9, 250),
-		// new DataPoint(10, 61)
-		// });
-		// graph3.addSeries(series3);
-		
 		mPickDate.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View v) {
 	            showDialog(DATE_DIALOG_ID);
@@ -138,7 +115,7 @@ public class ShowReport extends Activity {
 		if(steps>=6000)
 			remainingSteps="\nGoal is reached.";
 		else
-			remainingSteps="\n"+String.valueOf(6000-steps)+" steps is remained.";
+			remainingSteps="\n"+String.valueOf(6000-steps)+" steps are remained.";
 			
 		this.mStepsDisplay.setText(new StringBuilder().append("\n\nTotal number of steps are: ")
 				.append(String.valueOf(steps)).append("\nYour goal is: 6000 steps").append(remainingSteps)
