@@ -173,7 +173,7 @@ public class DataBase extends SQLiteOpenHelper
 	public void fillTimeLine() throws Exception
 	{
 		
-		deteleAllTimeLineRecords();
+		//deteleAllTimeLineRecords();
 		Cursor cr = getAllRecords(getLastDate());
 		Cursor ct = fetchLasTimeLineRecord();
 		if(cr.moveToFirst())

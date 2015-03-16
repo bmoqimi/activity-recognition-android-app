@@ -52,7 +52,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	static final int morningSleepCycleEnd = 9;
 	static final int audioThreshold = 20;
 	static final int lightThreshold = 2;
-	static final double sleepCheckCycle = 2; /** In minutes */
+	static final double sleepCheckCycle = 10; /** In minutes */
 	static final long sensorCycleCheck = 15; /** In seconds */
 	private Date sleepingSince;
 	private boolean isSleep = false;
@@ -469,7 +469,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			}
 		}
 		Log.d(SleepTag, "Now getting sensory input");
-		homeDetection.startScan();
+		if (!homeDetection.startScan()) 
+		{
+			Log.d(SleepTag, "Home Detection scan started successfully");
+		}
 		lightSensor.startListening();
 		audioSensor.startRecording();
 		sensorInProgress = true;

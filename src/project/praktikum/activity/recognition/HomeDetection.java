@@ -7,6 +7,7 @@ import java.util.List;
 
 import project.praktikum.database.DataBase;
 import android.text.TextUtils;
+import android.util.Log;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
@@ -41,6 +42,7 @@ public class HomeDetection  {
 	double longitude;
 	private Context context;
 	private boolean AtHome;
+	private String TAG = "HomeDetection";
 
 	//protected void onCreate(Bundle savedInstanceState)
 	public HomeDetection(Context cntx) {
@@ -59,11 +61,12 @@ public class HomeDetection  {
 			mainWifi.setWifiEnabled(true);
 		}
 		AtHome = false;
-		
+		Log.d(TAG, "Home Detection initialized");
 		
 	}
 
 	public boolean startScan() {
+		Log.d(TAG, "Scan started");
 		return mainWifi.startScan();
 	}
 
@@ -119,10 +122,12 @@ public class HomeDetection  {
 				}
 			if(percentage>=threshold)
 			{
+				Log.d(TAG, "Threshold is achieved so assuming the user is at home");
 				AtHome = true;
 			}
 			else
 			{
+				Log.d(TAG, "Threshold NOT achieved so the user is NOT at home");
 				AtHome = false;
 							}
 			if(!wifiStatus)
