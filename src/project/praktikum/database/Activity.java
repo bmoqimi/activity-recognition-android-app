@@ -24,6 +24,13 @@ public class Activity {
 		}
 	}
 	
+	public Activity(String act , Date start , Date finish) {
+		// TODO Auto-generated constructor stub
+		this.act = act;
+		this.Start = start;
+		this.Finish = finish;
+	}
+	
 	private Date convertStringToDate(String input) throws ParseException
 	{
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");

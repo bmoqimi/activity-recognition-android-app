@@ -1,6 +1,7 @@
 package project.praktikum.database;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import android.database.Cursor;
@@ -20,6 +21,7 @@ public class calcActivity {
 		mergeActivity();
 		removeShortActivity();
 		mergeActivity();
+		insertAddedActivities();
 		return res;
 	}
 	
@@ -45,6 +47,37 @@ public class calcActivity {
 				res.remove(i + 1);
 			}while(i + 1 < res.size() - 1
 					&& checkSameActivity(res.get(i).getAct(), res.get(i + 1).getAct()));
+		}
+	}
+	
+	private boolean isSameDay(Date date1 , Date date2)
+	{
+		Calendar cal1 = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		cal1.setTime(date1);
+		cal2.setTime(date2);
+		return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+		                  cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+	}
+	
+	private void insertAddedActivities()
+	{
+		for(int i=0 ; i < res.size() ; i++)
+		{
+			if(!(isSameDay(res.get(i).getStart(), res.get(i).getFinish())))
+			{
+				Date midNight = new Date();
+				midNight = res.get(i).getFinish();
+				midNight.setHours(0);
+				midNight.setMinutes(0);
+				midNight.setSeconds(0);
+				Activity act = new Activity(
+						res.get(i).getAct(),
+						midNight,
+						res.get(i).getFinish());
+				res.add(i + 1, act);
+				res.get(i).setFinish(midNight);
+			}
 		}
 	}
 	
