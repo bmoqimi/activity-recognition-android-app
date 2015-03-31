@@ -67,7 +67,7 @@ public class calcActivity {
 			if(!(isSameDay(res.get(i).getStart(), res.get(i).getFinish())))
 			{
 				Date midNight = new Date();
-				midNight = res.get(i).getFinish();
+				midNight.setTime(res.get(i).getFinish().getTime());
 				midNight.setHours(0);
 				midNight.setMinutes(0);
 				midNight.setSeconds(0);
@@ -76,7 +76,8 @@ public class calcActivity {
 						midNight,
 						res.get(i).getFinish());
 				res.add(i + 1, act);
-				res.get(i).setFinish(midNight);
+				Date temp = new Date(midNight.getTime() - 1000);
+				res.get(i).setFinish(temp);
 			}
 		}
 	}
