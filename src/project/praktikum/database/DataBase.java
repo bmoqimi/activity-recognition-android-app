@@ -173,7 +173,7 @@ public class DataBase extends SQLiteOpenHelper
 	public void fillTimeLine() throws Exception
 	{
 		
-		//deteleAllTimeLineRecords();
+		deteleAllTimeLineRecords();
 		Cursor cr = getAllRecords(getLastDate());
 		Cursor ct = fetchLasTimeLineRecord();
 		if(cr.moveToFirst())
@@ -232,7 +232,7 @@ public class DataBase extends SQLiteOpenHelper
 	
 	private String convertDateToString(Date input) throws ParseException
 	{
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String date = df.format(input);
 		return date;
 	}

@@ -252,7 +252,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	{
 		//Calendar c = Calendar.getInstance();
 		Log.i(TAG, "Recieved insert command with : " + activity);
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		if(isSleep) {
 			if(activity == "Still")
 				return;
@@ -413,7 +413,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 							isSleep = true;
 							sleepingSince = new Date();
 							noiseReduction.setState("Still");
-							SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+							SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 							Log.i(SleepTag, "First Sleeping event detected. Putting it in the database");
 							db.insertRecord("Sleeping", 0, df.format(sleepingSince));
 							return;
@@ -485,7 +485,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		isSleep = false;
 		Log.i(SleepTag,"wakeup detected with priority " + priority );
 		Date wakeupDate = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		db.insertRecord("Wakeup", 0, df.format(wakeupDate));
 		noiseReduction.setState("Still");
 		lastUserAction = wakeupDate;
