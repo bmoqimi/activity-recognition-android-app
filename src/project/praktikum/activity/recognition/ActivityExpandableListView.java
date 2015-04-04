@@ -44,7 +44,7 @@ public class ActivityExpandableListView extends ExpandableListActivity {
 
         if(aDate==null) return null;
         ParsePosition pos = new ParsePosition(0);
-        SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date stringDate = simpledateformat.parse(aDate, pos);
         return stringDate;            
 

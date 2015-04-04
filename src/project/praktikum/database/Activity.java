@@ -33,7 +33,7 @@ public class Activity {
 	
 	private Date convertStringToDate(String input) throws ParseException
 	{
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date d = new Date();
 		d = df.parse(input);
 		return d;
