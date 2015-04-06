@@ -20,7 +20,7 @@ public class calcActivity {
 		fillRes(c);
 		mergeActivity();
 		removeShortActivity();
-		mergeActivity();
+		//mergeActivity();
 		insertAddedActivities();
 		return res;
 	}
@@ -89,10 +89,10 @@ public class calcActivity {
 	
 	private boolean checkSameActivity(String s1, String s2)
 	{
-		if(s1.equals("Wakeup"))
-			s1 = "Sleeping";
-		if(s2.equals("Wakeup"))
-			s2 = "Sleeping";
+//		if(s1.equals("Wakeup"))
+//			s1 = "Sleeping";
+//		if(s2.equals("Wakeup"))
+//			s2 = "Sleeping";
 		if(s1.equals(s2))
 			return true;
 		return false;
