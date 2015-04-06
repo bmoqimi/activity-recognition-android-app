@@ -335,6 +335,7 @@ public class MainActivity extends ActionBarActivity {
 					ActivityCaptureService.class);
 			startService(i);
 			isServiceRunning = true;
+			db.insertRecord("StartService", 100, getCurrentDate());
 			//btn.setText("STOP CAPTURE");
 			doBindService();
 		} else {
@@ -435,6 +436,14 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
+	private String getCurrentDate()
+	{
+		Calendar c = Calendar.getInstance();
+		SimpleDateFormat df = new SimpleDateFormat("MM-dd-HH:mm:ss");
+		String date = df.format(c.getTime());
+		return date;
+	}
+	
 	@SuppressLint("SimpleDateFormat")
 	public void exportDB() {
 		File sd = Environment.getExternalStorageDirectory();
@@ -444,10 +453,7 @@ public class MainActivity extends ActionBarActivity {
 		String currentDBPath = "/data/" + "project.praktikum.activity.recognition"
 				+ "/databases/" + "MyDBName.db";
 		File currentDB = new File(data, currentDBPath);
-		Calendar c = Calendar.getInstance();
-		SimpleDateFormat df = new SimpleDateFormat("MM-dd-HH:mm:ss");
-		String date = df.format(c.getTime());
-		File backupDB = new File(sd, date);
+		File backupDB = new File(sd, getCurrentDate());
 		sendMail(backupDB);
 		try {
 			source = new FileInputStream(currentDB).getChannel();

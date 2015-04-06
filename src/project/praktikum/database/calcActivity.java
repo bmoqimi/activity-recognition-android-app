@@ -20,7 +20,6 @@ public class calcActivity {
 		fillRes(c);
 		mergeActivity();
 		removeShortActivity();
-		//mergeActivity();
 		insertAddedActivities();
 		return res;
 	}
@@ -40,13 +39,19 @@ public class calcActivity {
 	{
 		for(int i = 0 ; i < res.size() - 1 ; i++)
 		{
-			if(checkSameActivity(res.get(i).getAct(), res.get(i + 1).getAct()))
-			do
+			if(res.get(i).getAct().equals("StartService"))
 			{
-				res.get(i).setFinish(res.get(i + 1).getStart());
-				res.remove(i + 1);
-			}while(i + 1 < res.size() - 1
-					&& checkSameActivity(res.get(i).getAct(), res.get(i + 1).getAct()));
+				
+			}
+			else if(checkSameActivity(res.get(i).getAct(), res.get(i + 1).getAct()))
+			{
+				do
+				{
+					res.get(i).setFinish(res.get(i + 1).getStart());
+					res.remove(i + 1);
+				}while(i + 1 < res.size() - 1
+						&& checkSameActivity(res.get(i).getAct(), res.get(i + 1).getAct()));
+			}
 			else if(res.get(i + 1).getAct().equals("Wakeup") && res.get(i).getAct().equals("Sleeping"))
 			{
 				res.get(i).setFinish(res.get(i + 1).getStart());
