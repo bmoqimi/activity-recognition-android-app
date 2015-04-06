@@ -47,6 +47,11 @@ public class calcActivity {
 				res.remove(i + 1);
 			}while(i + 1 < res.size() - 1
 					&& checkSameActivity(res.get(i).getAct(), res.get(i + 1).getAct()));
+			else if(res.get(i + 1).getAct().equals("Wakeup") && res.get(i).getAct().equals("Sleeping"))
+			{
+				res.get(i).setFinish(res.get(i + 1).getStart());
+				res.remove(i + 1);
+			}
 		}
 	}
 	
