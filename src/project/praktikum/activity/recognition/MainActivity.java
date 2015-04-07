@@ -439,7 +439,7 @@ public class MainActivity extends ActionBarActivity {
 	private String getCurrentDate()
 	{
 		Calendar c = Calendar.getInstance();
-		SimpleDateFormat df = new SimpleDateFormat("MM-dd-HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String date = df.format(c.getTime());
 		return date;
 	}
