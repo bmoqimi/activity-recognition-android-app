@@ -43,13 +43,13 @@ public class Activity {
 		return Start;
 	}
 	public void setStart(Date start) {
-		Start = start;
+		this.Start = start;
 	}
 	public Date getFinish() {
 		return Finish;
 	}
 	public void setFinish(Date finish) {
-		Finish = finish;
+		this.Finish = finish;
 	}
 	public String getAct() {
 		return act;

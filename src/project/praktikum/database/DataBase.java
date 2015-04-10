@@ -183,9 +183,12 @@ public class DataBase extends SQLiteOpenHelper
 			ArrayList<Activity> activities = calc.Calc(cr, getTimeLineLastRecord(ct));
 			for(int i = 0 ; i < activities.size() ; i++)
 			{
-				insertTimeLine(activities.get(i).getAct(),
+				if(!activities.get(i).getAct().equals("StartService"))
+				{
+					insertTimeLine(activities.get(i).getAct(),
 						convertDateToString(activities.get(i).getStart()),
 						convertDateToString(activities.get(i).getFinish()));
+				}
 			}
 //			while(cr.isAfterLast() == false)
 //			{
