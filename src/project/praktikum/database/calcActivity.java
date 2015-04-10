@@ -105,12 +105,13 @@ public class calcActivity {
 	
 	private void removeShortActivity()
 	{
-		for(int i = 0 ; i < res.size() ; i++)
+		for(int i = 1 ; i < res.size() ; i++)
 		{
-			if(compareDates(res.get(i).getStart(), res.get(i).getFinish()))
+			if(compareDates(res.get(i).getStart(), res.get(i).getFinish()) && !res.get(i).getAct().equals("Sleeping"))
 			{
-				res.remove(i);
-				i--;
+				res.get(i).setStart(res.get(i - 1).getFinish());
+//				res.remove(i);
+//				i--;
 			}
 		}
 	}
